@@ -1,5 +1,5 @@
 using finite_fields;
-namespace finite_fields_tests
+namespace FiniteFieldsTests
 {
 	[TestClass]
 	public class FiniteFieldsTest
@@ -127,6 +127,110 @@ namespace finite_fields_tests
 			}
 
 			Assert.IsTrue(cnf);
+		}
+		[TestMethod]
+		public void BinaryPlus_GF7()
+		{
+			var gf7 = new PrimeFiniteField(7);
+			var gf7_4 = gf7.Get(4);
+			var gf7_5 = gf7.Get(5);
+			var sum = gf7_4 + gf7_5;
+			var expectedsum = gf7.Get(2);
+
+			Assert.AreEqual(expectedsum, sum);
+		}
+		[TestMethod]
+		public void BinaryMinus_GF7()
+		{
+			var gf7 = new PrimeFiniteField(7);
+			var gf7_1 = gf7.Get(1);
+			var gf7_5 = gf7.Get(5);
+			var res = gf7_1 - gf7_5;
+			var expectedres = gf7.Get(3);
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void Asterisk_GF7()
+		{
+			var gf7 = new PrimeFiniteField(7);
+			var gf7_6 = gf7.Get(6);
+			var gf7_5 = gf7.Get(5);
+			var res = gf7_6 * gf7_5;
+			var expectedres = gf7.Get(2);
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void Inverse_GF7()
+		{
+			var gf7 = new PrimeFiniteField(7);
+			var gf7_4 = gf7.Get(4);
+			var res = gf7_4.Inverse();
+			var expectedres = gf7.Get(2);
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void Slash_GF7()
+		{
+			var gf7 = new PrimeFiniteField(7);
+			var gf7_3 = gf7.Get(3);
+			var gf7_6 = gf7.Get(6);
+			var res = gf7_3 / gf7_6;
+			var expectedres = gf7.Get(4);
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void Initialization_Polyn()
+		{
+			var p = new RPolyn(7, new int[] { 12, 7, -12, 67, -90 });
+			var exp = new RPolyn(7, new int[] { 5, 0, 2, 4, 1 });
+
+			Assert.AreEqual(exp, p);
+		}
+		[TestMethod]
+
+		//cutoffmethod
+		public void CutOffZeros_Polyn()
+		{
+			var res = new RPolyn(7, new int[] { 0, 6, 3, 0, 1, 1, 0, 0 });
+			var expectedres = new RPolyn(7, new int[] { 0, 6, 3, 0, 1, 1 });
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void BinaryPlus_Polyn()
+		{
+			var p1 = new RPolyn(7, new int[] { 0, 6, 1, 2, 5, 1 });
+			var p2 = new RPolyn(7, new int[] { 1, 4, 3, 1, 2, 3 });
+
+			var res = p1 + p2;
+			var expres = new RPolyn(7, new int[] { 1, 3, 4, 3, 0, 4 });
+			Assert.AreEqual(expres, res);
+		}
+		[TestMethod]
+		public void BinaryMinus_Polyn()
+		{
+			var p1 = new RPolyn(7, new int[] { 3, 1, 1, 2, 1, 5 });
+			var p2 = new RPolyn(7, new int[] { 3, 5, 3, 5, });
+
+			var res = p1 - p2;
+			var expres = new RPolyn(7, new int[] { 0, 3, 5, 4, 1, 5 });
+			Assert.AreEqual(expres, res);
+		}
+
+		[TestMethod]
+
+		public void Asterisk_Polyn()
+		{
+			var p1 = new RPolyn(7, new int[] { 3, 1, 1 });
+			var p2 = new RPolyn(7, new int[] { 3, 5, 3, 2, 4 });
+
+			var res = p1 * p2;
+			var expectedres = new RPolyn(7, new int[] { 2, 4, 3, 0, 3, 6, 4 });
+			Assert.AreEqual(expectedres, res);
 		}
 	}
 }
