@@ -77,7 +77,7 @@ namespace finite_fields
 		{
 			if (this._value == 0)
 				throw new ArgumentException("Cannot find inverse to additive neutral");
-			return new PrimeFiniteFieldElement(_primeChar, ModularExp(this._value, this._primeChar - 2, this._primeChar));
+			return new PrimeFiniteFieldElement(_primeChar, ModularExp(this._value, this._primeChar - 2, this._primeChar)); //o_o
 		}
 
 		public static PrimeFiniteFieldElement operator -(PrimeFiniteFieldElement m, PrimeFiniteFieldElement s)
@@ -91,11 +91,15 @@ namespace finite_fields
 			if (obj == null)
 				return false;
 			if (obj is PrimeFiniteFieldElement)
-				if ((obj as PrimeFiniteFieldElement)._primeChar.Equals(this._primeChar)
+				if ((obj as PrimeFiniteFieldElement)._primeChar.Equals(this._primeChar) //self-explanatory
 					&& (obj as PrimeFiniteFieldElement)._value.Equals(this._value))
 					return true;
 
 			return false;
+		}
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
 		}
 	}
 }

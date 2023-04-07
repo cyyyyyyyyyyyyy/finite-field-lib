@@ -12,30 +12,27 @@ namespace finite_fields
 	{
 		private readonly int _primeChar;
 		private readonly int _length;
+		private readonly PrimeFiniteField _field;
 		private readonly PrimeFiniteFieldElement[] _value;
 		public RPolyn(int Characteristic, int[] IntegerPolynomial) 
 		{
-			// no restrictions on characteristics
+			// no restrictions on characteristics upd: um...
 			if (Characteristic < 1)
 				throw new ArgumentException("Text");
 
 			_primeChar = Characteristic;
+			_field = new PrimeFiniteField(_primeChar);
 
 			if (IntegerPolynomial.Length < 1)
 				throw new ArgumentException("Text");
 
-			//check for redundant zeros
+			//cut off zeros
 			int lengthCutoffZeros = 1;
 			for (int j = 0; j < IntegerPolynomial.Length; j++)
 				if (IntegerPolynomial[j] != 0)
 					lengthCutoffZeros = j + 1;
 
 			_length = lengthCutoffZeros;
-			//fill
-			//PrimeFiniteFieldElement[] val = new PrimeFiniteFieldElement[_length];
-			//for (int i = 0; i < _length; i++)
-				//val[i] = new PrimeFiniteFieldElement(_primeChar, IntegerPolynomial[i]);
-
 
 			_value = Fill(_length, i => new PrimeFiniteFieldElement(_primeChar, IntegerPolynomial[i]));
 		}
@@ -44,22 +41,28 @@ namespace finite_fields
 			if (Characteristic < 1)
 				throw new ArgumentException("Text");
 
-			_primeChar = Characteristic;
-
 			if (ElementPolynomial.Length < 1)
 				throw new ArgumentException("Text");
 
-			int lengthCutoffZeros = 1;
-			PrimeFiniteFieldElement zero = new PrimeFiniteFieldElement(_primeChar, 0);
+			_primeChar = Characteristic;
+			_field = new PrimeFiniteField(_primeChar);
 
+			//cut off zeros
+			int lengthCutoffZeros = 1;
 			for (int j = 0; j < ElementPolynomial.Length; j++)
-				if (!ElementPolynomial[j].Equals(zero))
+				if (!ElementPolynomial[j].Equals(_field.GetAdditiveIdent()))
 					lengthCutoffZeros = j + 1;
+
+			//characteristics correctness
+			for (int i = 0; i < lengthCutoffZeros; i++)
+				if (!ElementPolynomial[i].GetCharacteristic().Equals(_primeChar))
+					throw new ArgumentException("Text");
 
 			_length = lengthCutoffZeros;
 
+			//fill
 			if (_length != ElementPolynomial.Length)
-				_value = Fill(_length, i => ElementPolynomial[i]);
+				_value = Fill(_length, i => ElementPolynomial[i]); //characteristics check?
 			else _value = ElementPolynomial;
 		}
 		public int GetCharacteristic() => _primeChar;
@@ -115,17 +118,16 @@ namespace finite_fields
 			if (l._length == p1._length)
 			{
 				for (int j = l._length; j < m._length; j++)
-					res[j] = fun(new PrimeFiniteFieldElement(p1._primeChar, 0), p2._value[j]);
+					res[j] = fun(p1._field.GetAdditiveIdent(), p2._value[j]); //zero
 			}
 			else
 			{
 				for (int j = l._length; j < m._length; j++)
-					res[j] = fun(p1._value[j], new PrimeFiniteFieldElement(p1._primeChar, 0));
+					res[j] = fun(p1._value[j], p1._field.GetAdditiveIdent()); //zero
 			}
 
 			return new RPolyn(p1._primeChar, res);
 		}
-		//
 		public static RPolyn operator +(RPolyn pe)
 			=> pe;
 		public static RPolyn operator -(RPolyn pe)
@@ -133,27 +135,27 @@ namespace finite_fields
 		public static RPolyn operator +(RPolyn pa1, RPolyn pa2)
 		{
 			return Map(pa1, pa2, (e1, e2) => e1 + e2);
-		} //maybe to just restrict the length of polyns, so that they are the same? - becuz why add redundant functionality?
+		} //maybe to just restrict the length of polyns, so that they are the same? - becuz why add redundant functionality? upd: yea ima king of auxillary bs
 		public static RPolyn operator -(RPolyn pm, RPolyn ps)
 		{
 			return Map(pm, ps, (e1, e2) => e1 - e2);
 		}			
 		public static RPolyn operator %(RPolyn p1, RPolyn p2)
 		{
-			// I guess p2 should be irreducible
+			// I guess p2 should be irreducible; upd: i don't think so
 			if (!p1._primeChar.Equals(p2._primeChar))
 				throw new ArgumentException("text");
 
 			if (p1._length < p2._length)
-				return p1; // not really
+				return p1; // not really; upd: really
 
-			PrimeFiniteFieldElement[] remainder = p1._value; // array?
+			PrimeFiniteFieldElement[] remainder = p1._value; 
 			//PrimeFiniteFieldElement[] quotient = new PrimeFiniteFieldElement[p1._length - p2._length + 1];
 			for (int i = 0; i < p1._length - p2._length + 1; i++) // ok
 			{
 				PrimeFiniteFieldElement coeff = remainder[p1._length - 1 - i] / p2._value[p2._length - 1]; // if coeff is zero?
 			    //quotient[quotient.Length - i - 1] = coeff;
-				if (coeff.GetValue() == 0)
+				if (coeff.GetValue() == 0) // that's what happens to yall, useless little zeros
 					continue;
 
 				for (int j = 0; j < p2._length; j++)
@@ -169,13 +171,13 @@ namespace finite_fields
 			if (!pm1._primeChar.Equals(pm2._primeChar))
 				throw new ArgumentException("text");
 
-			var res = Fill(pm1._length + pm2._length - 1, i => new PrimeFiniteFieldElement(pm1._primeChar, 0));
+			var res = Fill(pm1._length + pm2._length - 1, i => pm1._field.GetAdditiveIdent()); // zero
 
 			for (int i = 0; i < pm1._length; i++)
 				for (int j = 0; j < pm2._length; j++)
 					res[i + j] += pm1._value[i] * pm2._value[j];
 
-			return new RPolyn(pm1._primeChar, res); // need to get remainder******
+			return new RPolyn(pm1._primeChar, res); // need to get remainder****** upd: no
 		}
 
 		public override bool Equals(object? obj)
@@ -183,11 +185,16 @@ namespace finite_fields
 			if (obj == null)
 				return false;
 			if (obj is RPolyn)
+			{
+				if (!(obj as RPolyn)._primeChar.Equals(this._primeChar)) // if char-cs of RPolyns aren't equal - not OK
+					return false;
+
 				for (int i = 0; i < this._length; i++)
-					if (!this._value[i].Equals((obj as RPolyn)._value[i]))
+					if (!this._value[i].Equals((obj as RPolyn)._value[i])) // compares only _value, characteristic of concrete RPolyn is OK
 						return false;
 				return true;
-			//return false;
+			}
+			return false;
 		}
 		public override int GetHashCode()
 		{
