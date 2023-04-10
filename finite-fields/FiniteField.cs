@@ -34,17 +34,17 @@ namespace finite_fields
 		public int[] GetPolynomial() => _polyn.GetValue();
 
 		public FiniteFieldElement GetAdditiveNeutral()
-		{
-			return new FiniteFieldElement(_primeChar, new RPolyn(_primeChar, new int[] { 0 }), _polyn);
-		}
+			=> new FiniteFieldElement(_primeChar, new RPolyn(_primeChar, new int[] { 0 }), _polyn);
 		public FiniteFieldElement GetMultiplicativeNeutral()
+			=> new FiniteFieldElement(_primeChar, new RPolyn(_primeChar, new int[] { 1 }), _polyn);
+		public FiniteFieldElement Get(int[] IntegerPolynomial) 
+			=> new FiniteFieldElement(_primeChar, new RPolyn(_primeChar, IntegerPolynomial), _polyn);
+		public FiniteFieldElement Get(byte[] bytes)
 		{
-			return new FiniteFieldElement(_primeChar, new RPolyn(_primeChar, new int[] { 1 }), _polyn);
-		}
-		public FiniteFieldElement Get(int[] IntegerPolynomial)
-		{
-			//throw new NotImplementedException();
-			return new FiniteFieldElement(_primeChar, new RPolyn(_primeChar, IntegerPolynomial), _polyn);
+			if (_primeChar == 2)
+				throw new NotImplementedException();
+			else
+				throw new ArgumentException("Text");
 		}
 	}
 
@@ -53,7 +53,7 @@ namespace finite_fields
 		private readonly int _primeChar;
 		private readonly int _dim;
 		private readonly RPolyn _value;
-		private readonly RPolyn _fpolyn; // factoriazation polynomial; or maybe i just need _field there
+		private readonly RPolyn _fpolyn; // factoriazation polynomial
 
 		public FiniteFieldElement(int PrimeFieldCharacteristic, RPolyn PolynomialValue, RPolyn FactorPolynomial)
 		{
@@ -75,7 +75,39 @@ namespace finite_fields
 		public int GetCharacteristic() => _primeChar;
 		public int GetDimension() => _dim;
 		public int[] GetValue() => _value.GetValue();
-		private static RPolyn ModularExp(RPolyn b, int exp, RPolyn m)
+		public byte[] GetByte()
+		{
+			if (this._primeChar != 2) 
+				throw new ArgumentException();
+
+			//int intFromBinaryArray = 0;
+			//var val = this.GetValue();
+			//int b = 1;
+			//for (int i = 0; i < this._dim; i++)
+			//{
+			//	intFromBinaryArray += val[i] * b;
+			//	b *= 2;
+			//}
+			//return BitConverter.GetBytes(intFromBinaryArray);
+
+			var val = this.GetValue();
+			byte[] bytes = new byte[((val.Length - 1) / 8) + 1]; //um
+			int b = 1;
+			int k = 0;
+			for (int i = 0; i < val.Length; i++)
+			{
+				bytes[k] += Convert.ToByte(val[i] * b);
+				b *= 2;
+				if (b % 256 == 0)
+				{
+					b = 1;
+					k++;
+				}
+			}
+
+			return bytes;
+		}
+		protected static RPolyn ModularExp(RPolyn b, int exp, RPolyn m)
 		{
 			//int exp = _primeChar - 2;
 			var gf = new FiniteField(b.GetCharacteristic(), m.GetValue());
@@ -145,15 +177,6 @@ namespace finite_fields
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
-		}
-	}
-	class BinaryFiniteField : FiniteField
-	{
-		public BinaryFiniteField(int[] IntegerPolynomial) : base(2, IntegerPolynomial) { }
-
-		public byte[] GetByte()
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

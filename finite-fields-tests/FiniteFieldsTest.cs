@@ -378,5 +378,52 @@ namespace FiniteFieldsTests
 
 			Assert.AreEqual(expectedres, res);
 		}
+
+		[TestMethod]
+		public void GetBytesTest_GF16()
+		{
+			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
+			var e = gf16.Get(new int[] { 1, 1, 0, 1});
+			byte[] res = e.GetByte();
+			byte[] expectedres = new byte[1] { 11 };
+
+			bool cnf = true;
+			for (int i = 0; i < res.Length; i++)
+				cnf = cnf && res[i].Equals(expectedres[i]);
+
+			Assert.IsTrue(cnf);
+		}
+		[TestMethod]
+		public void GetBytesTest_GF512()
+		{
+			var gf512 = new FiniteField(2, new int[] { 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 });
+			var e = gf512.Get(new int[] { 1, 0, 1, 1, 0, 1, 0, 0, 1 });
+			byte[] res = e.GetByte();
+			byte[] expectedres = new byte[2] { 45, 1 };
+
+			bool cnf = true;
+			for (int i = 0; i < res.Length; i++)
+				cnf = cnf && res[i].Equals(expectedres[i]);
+
+			Assert.IsTrue(cnf);
+		}
+
+		[TestMethod]
+		public void GetBytesTest_GF2_25()
+		{
+			var gf2_25 = new FiniteField(2, 
+				new int[] { 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 });
+			var e = gf2_25.Get(
+				new int[] { 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1 });
+
+			byte[] res = e.GetByte();
+			byte[] expectedres = new byte[3] { 147, 230, 165 };
+
+			bool cnf = true;
+			for (int i = 0; i < res.Length; i++)
+				cnf = cnf && res[i].Equals(expectedres[i]);
+
+			Assert.IsTrue(cnf);
+		}
 	}
 }
