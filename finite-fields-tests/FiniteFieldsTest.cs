@@ -425,5 +425,34 @@ namespace FiniteFieldsTests
 
 			Assert.IsTrue(cnf);
 		}
+
+		[TestMethod]
+		public void GetFromBytesTest()
+		{
+			bool cnf = true;
+
+			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
+			var e1 = gf16.Get(new int[] { 1, 1, 0, 1 });
+			byte[] bytes1 = e1.GetByte();
+			var e1_fromBytes = gf16.Get(bytes1);
+			cnf = cnf && e1_fromBytes.Equals(e1);
+
+			var gf512 = new FiniteField(2, new int[] { 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 });
+			var e2 = gf512.Get(new int[] { 1, 0, 1, 1, 0, 1, 0, 0, 1 });
+			byte[] bytes2 = e2.GetByte();
+			var e2_fromBytes = gf512.Get(bytes2);
+			cnf = cnf && e2_fromBytes.Equals(e2);
+
+			var gf2_25 = new FiniteField(2,
+				new int[] { 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 });
+			var e3 = gf2_25.Get(
+				new int[] { 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1 });
+
+			byte[] bytes3 = e3.GetByte();
+			var e3_fromBytes = gf2_25.Get(bytes3);
+			cnf = cnf && e3_fromBytes.Equals(e3);
+
+			Assert.IsTrue(cnf);
+		}
 	}
 }
