@@ -22,11 +22,11 @@
 		public int[] GetPolynomial() => _polyn.GetValue();
 
 		public FiniteFieldElement GetAdditiveNeutral()
-			=> new (_primeChar, new RPolyn(_primeChar, new int[] { 0 }), _polyn);
+			=> new(_primeChar, new RPolyn(_primeChar, new int[] { 0 }), _polyn);
 		public FiniteFieldElement GetMultiplicativeNeutral()
-			=> new (_primeChar, new RPolyn(_primeChar, new int[] { 1 }), _polyn);
-		public FiniteFieldElement Get(int[] IntegerPolynomial) 
-			=> new (_primeChar, new RPolyn(_primeChar, IntegerPolynomial), _polyn);
+			=> new(_primeChar, new RPolyn(_primeChar, new int[] { 1 }), _polyn);
+		public FiniteFieldElement Get(int[] IntegerPolynomial)
+			=> new(_primeChar, new RPolyn(_primeChar, IntegerPolynomial), _polyn);
 		public FiniteFieldElement Get(byte[] bytes)
 		{
 			if (this._primeChar != 2)
@@ -35,7 +35,7 @@
 			string[] strbytes = new string[bytes.Length];
 			for (int i = 0; i < bytes.Length; i++)
 			{
-				char[] charArr = Convert.ToString(bytes[i], 2).PadLeft(8, '0').ToCharArray();
+				char[] charArr = Convert.ToString(bytes[i], 2)/*.PadLeft(8, '0')*/.ToCharArray();
 				Array.Reverse(charArr);
 				strbytes[i] = new string(charArr);
 			}
@@ -48,7 +48,7 @@
 				binString = strbytes[i];
 				for (int j = 0; j < binString.Length; j++)
 				{
-					res[i * 8 + j] = Convert.ToInt32(binString[j]); 
+					res[i * 8 + j] = Convert.ToInt32(binString[j]);
 				}
 				for (int j = binString.Length; j < 8; j++)
 				{
@@ -87,7 +87,7 @@
 			_fpolyn = FactorPolynomial;
 			_dim = _fpolyn.GetLength() - 1;
 
-			_value = PolynomialValue % _fpolyn;			
+			_value = PolynomialValue % _fpolyn;
 		}
 
 		public int GetCharacteristic() => _primeChar;
@@ -95,21 +95,11 @@
 		public int[] GetValue() => _value.GetValue();
 		public byte[] GetByte()
 		{
-			if (this._primeChar != 2) 
+			if (this._primeChar != 2)
 				throw new ArgumentException();
 
-			//int intFromBinaryArray = 0;
-			//var val = this.GetValue();
-			//int b = 1;
-			//for (int i = 0; i < this._dim; i++)
-			//{
-			//	intFromBinaryArray += val[i] * b;
-			//	b *= 2;
-			//}
-			//return BitConverter.GetBytes(intFromBinaryArray);
-
 			var val = this.GetValue();
-			byte[] bytes = new byte[((val.Length - 1) / 8) + 1]; //um
+			byte[] bytes = new byte[((val.Length - 1) / 8) + 1];
 			int b = 1;
 			int k = 0;
 			for (int i = 0; i < val.Length; i++)
@@ -142,7 +132,7 @@
 		public static FiniteFieldElement operator +(FiniteFieldElement pe)
 			=> pe;
 		public static FiniteFieldElement operator -(FiniteFieldElement pe)
-			=> new (pe._primeChar, -pe._value, pe._fpolyn);
+			=> new(pe._primeChar, -pe._value, pe._fpolyn);
 		public static FiniteFieldElement operator +(FiniteFieldElement pa1, FiniteFieldElement pa2)
 		{
 			if (!pa1._primeChar.Equals(pa2._primeChar) || !pa1._dim.Equals(pa2._dim)) // do i need to check factor polynimial equality?
@@ -176,21 +166,17 @@
 		{
 			if (obj == null)
 				return false;
-			else
-			{
-				if (obj is FiniteFieldElement)
-				{
-					if (!(obj as FiniteFieldElement)._primeChar.Equals(this._primeChar)
-						||!(obj as FiniteFieldElement)._dim.Equals(this._dim)) // char-c and dim check
-						return false;
-
-					if (!(obj as FiniteFieldElement)._value.Equals(this._value)) // values check
-						return false;
-
-					return true;
-				}
+			if (obj.GetType() != this.GetType())
 				return false;
-			}
+
+			if (!(obj as FiniteFieldElement)._primeChar.Equals(this._primeChar)
+				|| !(obj as FiniteFieldElement)._dim.Equals(this._dim)) // char-c and dim check
+				return false;
+
+			if (!(obj as FiniteFieldElement)._value.Equals(this._value)) // values check
+				return false;
+
+			return true;
 		}
 		public override int GetHashCode()
 		{
