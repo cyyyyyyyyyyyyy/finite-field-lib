@@ -1,38 +1,58 @@
-﻿namespace finite_fields
+﻿using System.Numerics;
+
+namespace finite_fields
 {
-	public class FiniteField
+	public class FiniteField : IFiniteField<FiniteFieldElement>
 	{
 		private readonly int _primeChar;
 		private readonly int _dim;
-		private readonly RPolyn _polyn;
+		private readonly RPolyn<PrimeFiniteFieldElement> _polyn;
 
-		public FiniteField(int PrimeFieldCharacterictic, int[] IntegerPolynomial)
+		public FiniteField(int PrimeFieldCharacteristic, int[] IntegerPolynomial)
 		{
-			if (PrimeFieldCharacterictic < 1)
-				throw new ArgumentException("Text");
+			//PrimeFieldCharacteristic should be prime
+			//IntegerPolynomial should be irreducible
+			if (PrimeFieldCharacteristic < 1)
+				throw new ArgumentException("Error in FiniteField: PrimeFieldCharacteristic should be prime and greater than 1");
 
-			_primeChar = PrimeFieldCharacterictic;
+			_primeChar = PrimeFieldCharacteristic;
 
-			_polyn = new RPolyn(_primeChar, IntegerPolynomial);
+			int[] copiedPolyn = new int[IntegerPolynomial.Length];
+			Array.Copy(IntegerPolynomial, copiedPolyn, IntegerPolynomial.Length);
+			_polyn = new RPolyn<PrimeFiniteFieldElement>(_primeChar, IntegerPolynomial);
 			_dim = _polyn.GetLength() - 1;
+		}
+		public FiniteField(int PrimeFieldCharacteristic, PrimeFiniteFieldElement[] ElementPolynomial)
+		{
+			//PrimeFieldCharacteristic should be prime
+			//IntegerPolynomial should be irreducible
+			if (PrimeFieldCharacteristic < 1)
+				throw new ArgumentException("Error in FiniteField: PrimeFieldCharacteristic should be prime and greater than 1");
 
+			_primeChar = PrimeFieldCharacteristic;
+
+			PrimeFiniteFieldElement[] copiedPolyn = new PrimeFiniteFieldElement[ElementPolynomial.Length];
+			Array.Copy(ElementPolynomial, copiedPolyn, ElementPolynomial.Length);
+			_polyn = new RPolyn<PrimeFiniteFieldElement>(_primeChar, ElementPolynomial);
+			_dim = _polyn.GetLength();
 		}
 		public int GetCharacteristic() => _primeChar;
 		public int GetDimension() => _dim;
-		public int[] GetPolynomial() => _polyn.GetValue();
+		public int[] GetPolynomial() => _polyn.GetValue().Select(x => x.GetValue()).ToArray();
 
-		public FiniteFieldElement GetAdditiveNeutral()
-			=> new(_primeChar, new RPolyn(_primeChar, new int[] { 0 }), _polyn);
-		public FiniteFieldElement GetMultiplicativeNeutral()
-			=> new(_primeChar, new RPolyn(_primeChar, new int[] { 1 }), _polyn);
+		public FiniteFieldElement GetAdditiveIdent()
+			=> new(_primeChar, new RPolyn<PrimeFiniteFieldElement>(_primeChar, new int[] { 0 }), _polyn);
+		public FiniteFieldElement GetMultiplicativeIdent()
+			=> new(_primeChar, new RPolyn<PrimeFiniteFieldElement>(_primeChar, new int[] { 1 }), _polyn);
 		public FiniteFieldElement Get(int[] IntegerPolynomial)
-			=> new(_primeChar, new RPolyn(_primeChar, IntegerPolynomial), _polyn);
+			=> new(_primeChar, new RPolyn<PrimeFiniteFieldElement>(_primeChar, IntegerPolynomial), _polyn);
 		public FiniteFieldElement Get(byte[] bytes)
 		{
+			//__dim mod 8 == 0
 			if (this._primeChar != 2)
 				throw new ArgumentException("Text");
 
-			string[] strbytes = new string[bytes.Length];
+			string[] strbytes = new string[bytes.Length];//representation of byte array as correct binary string array
 			for (int i = 0; i < bytes.Length; i++)
 			{
 				char[] charArr = Convert.ToString(bytes[i], 2)/*.PadLeft(8, '0')*/.ToCharArray();
@@ -56,43 +76,62 @@
 				}
 			}
 
-			//binString = strbytes[lastIndex];
-			//for (int j = 0; j < binString.Length; j++)
-			//{
-			//	res[lastIndex*8 + j] = Convert.ToInt32(binString[j]);
-			//}
+			//cutting zeros off in the constructor
+			return new FiniteFieldElement(this._primeChar, new RPolyn<PrimeFiniteFieldElement>(_primeChar, res), this._polyn);
+		}
 
-			return new FiniteFieldElement(this._primeChar, new RPolyn(_primeChar, res), this._polyn);
+		public override bool Equals(object? obj)
+		{
+			if (ReferenceEquals(obj, null))
+				return false;
+			//if (obj.GetType() != this.GetType())
+			//	return false;
+			if (obj is not FiniteField ff)
+				return false;
+
+			if (ff._primeChar.Equals(this._primeChar)
+				&& ff._dim.Equals(this._dim)
+				&& ff._polyn.Equals(this._polyn))
+				return true;
+
+			return false;
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
 		}
 	}
 
-	public class FiniteFieldElement
+	public class FiniteFieldElement : IFiniteFieldElement<FiniteFieldElement>
 	{
 		private readonly int _primeChar;
 		private readonly int _dim;
-		private readonly RPolyn _value;
-		private readonly RPolyn _fpolyn; // factoriazation polynomial
+		private readonly RPolyn<PrimeFiniteFieldElement> _value;
+		private readonly RPolyn<PrimeFiniteFieldElement> _fpolyn; // factoriazation polynomial
 
-		public FiniteFieldElement(int PrimeFieldCharacteristic, RPolyn PolynomialValue, RPolyn FactorPolynomial)
+		public FiniteFieldElement(int PrimeFieldCharacteristic, RPolyn<PrimeFiniteFieldElement> PolynValue, RPolyn<PrimeFiniteFieldElement> FactorPolyn)
 		{
 			if (PrimeFieldCharacteristic < 1)
 				throw new ArgumentException("Text");
 
-			if (!(PrimeFieldCharacteristic == PolynomialValue.GetCharacteristic())
-				|| !(PrimeFieldCharacteristic == FactorPolynomial.GetCharacteristic()))
+			if (!(PrimeFieldCharacteristic == PolynValue.GetCharacteristic())
+				|| !(PrimeFieldCharacteristic == FactorPolyn.GetCharacteristic()))
 				throw new ArgumentException("Text");
 
 
 			_primeChar = PrimeFieldCharacteristic;
-			_fpolyn = FactorPolynomial;
+			_fpolyn = FactorPolyn;
 			_dim = _fpolyn.GetLength() - 1;
 
-			_value = PolynomialValue % _fpolyn;
-		}
-
+			_value = PolynValue % _fpolyn;
+		}		
+		public int[] GetValue() => _value.GetValue().Select(x => x.GetValue()).ToArray();
+		public int[] InternalGetValue() => GetValue();
 		public int GetCharacteristic() => _primeChar;
+		public IFiniteField<FiniteFieldElement> GetField() => throw new Exception("Teext");
+		public bool CorrectnessCheck(FiniteFieldElement other) => throw new NotImplementedException();
 		public int GetDimension() => _dim;
-		public int[] GetValue() => _value.GetValue();
 		public byte[] GetByte()
 		{
 			if (this._primeChar != 2)
@@ -115,11 +154,12 @@
 
 			return bytes;
 		}
-		protected static RPolyn ModularExp(RPolyn b, int exp, RPolyn m)
+		protected static RPolyn<PrimeFiniteFieldElement> ModularExp(RPolyn<PrimeFiniteFieldElement> b, int exp, RPolyn<PrimeFiniteFieldElement> m)
 		{
 			//int exp = _primeChar - 2;
 			var gf = new FiniteField(b.GetCharacteristic(), m.GetValue());
-			var res = gf.GetMultiplicativeNeutral()._value;
+			//var gf = new FiniteField(b.GetCharacteristic(), m);
+			var res = gf.GetMultiplicativeIdent()._value;
 			while (exp > 0)
 			{
 				if (exp % 2 == 1)
@@ -153,7 +193,7 @@
 		public FiniteFieldElement Inverse()
 		{
 			var gf = new FiniteField(this._primeChar, this._fpolyn.GetValue());
-			if (this.Equals(gf.GetAdditiveNeutral()))
+			if (this.Equals(gf.GetAdditiveIdent()))
 				throw new ArgumentException("text");
 
 			return new FiniteFieldElement(this._primeChar, ModularExp(this._value, (int)(Math.Pow(this._primeChar, this._dim)) - 2, this._fpolyn), this._fpolyn);
@@ -166,14 +206,16 @@
 		{
 			if (obj == null)
 				return false;
-			if (obj.GetType() != this.GetType())
+			//if (obj.GetType() != this.GetType())
+			//	return false;
+			if (obj is not FiniteFieldElement ffe)
 				return false;
 
-			if (!(obj as FiniteFieldElement)._primeChar.Equals(this._primeChar)
-				|| !(obj as FiniteFieldElement)._dim.Equals(this._dim)) // char-c and dim check
+			if (!ffe._primeChar.Equals(this._primeChar)
+				|| !ffe._dim.Equals(this._dim)) // char-c and dim check
 				return false;
 
-			if (!(obj as FiniteFieldElement)._value.Equals(this._value)) // values check
+			if (!ffe._value.Equals(this._value)) // values check
 				return false;
 
 			return true;
