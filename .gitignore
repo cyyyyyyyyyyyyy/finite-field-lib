@@ -1,0 +1,6 @@
+.vs/
+finite-fields/bin
+finite-fields/obj
+finite-fields-tests/bin
+finite-fields-tests/obj
+TestResults/
