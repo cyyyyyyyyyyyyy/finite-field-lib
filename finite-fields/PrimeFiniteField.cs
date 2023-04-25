@@ -32,7 +32,7 @@ namespace finite_fields
 		{
 			// check _primechar is prime and _value < _char'
 			if (PrimeFieldCharacterictic < 1)
-				throw new ArgumentException("Text");
+				throw new ArgumentException("Incorrect field characteristic");
 
 			_primeChar = PrimeFieldCharacterictic;
 			_value = Value % _primeChar;
@@ -76,7 +76,7 @@ namespace finite_fields
 		public PrimeFiniteFieldElement Inverse()
 		{
 			if (this._value == 0)
-				throw new ArgumentException("Cannot find inverse to additive neutral");
+				throw new ArgumentException("Cannot find multiplicative inverse to additive neutral");
 			return new PrimeFiniteFieldElement(_primeChar, ModularExp(this._value, this._primeChar - 2, this._primeChar)); //o_o
 		}
 
