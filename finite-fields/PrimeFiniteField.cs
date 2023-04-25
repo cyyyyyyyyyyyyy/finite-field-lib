@@ -88,12 +88,15 @@ namespace finite_fields
 
 		public override bool Equals(object? obj)
 		{
-			if (obj == null)
+			if (ReferenceEquals(obj, null))
 				return false;
-			if (obj is PrimeFiniteFieldElement)
-				if ((obj as PrimeFiniteFieldElement)._primeChar.Equals(this._primeChar) //self-explanatory
-					&& (obj as PrimeFiniteFieldElement)._value.Equals(this._value))
-					return true;
+			if (obj.GetType() != this.GetType())
+				return false;
+
+			//if (obj is PrimeFiniteFieldElement)
+			if ((obj as PrimeFiniteFieldElement)._primeChar.Equals(this._primeChar) //self-explanatory
+				&& (obj as PrimeFiniteFieldElement)._value.Equals(this._value))
+				return true;
 
 			return false;
 		}

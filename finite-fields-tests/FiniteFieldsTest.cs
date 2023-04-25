@@ -7,6 +7,31 @@ namespace FiniteFieldsTests
 	public class FiniteFieldsTest
 	{
 		[TestMethod]
+		public void EqualsTest1()
+		{
+			PrimeFiniteField gf7 = new PrimeFiniteField(7);
+			var gf7_2_1 = gf7.Get(2);
+			var gf7_2_2 = gf7.Get(2);
+			var gf7_2_3 = gf7_2_1;
+
+			var gf7_3_1 = gf7.Get(3);
+			var gf7_3_2 = gf7.Get(3);
+			var gf7_3_3 = gf7_2_1;
+
+			bool b1 = gf7_2_1 == gf7_2_2; // false
+			bool b2 = gf7_2_1 == gf7_2_3; // true
+			bool b3 = gf7_2_2 == gf7_2_3; // false
+			bool b4 = gf7_2_1.Equals(gf7_2_2); // true
+			bool b5 = gf7_2_1.Equals(gf7_2_3); // true
+			bool b6 = gf7_2_2.Equals(gf7_2_3); // true
+
+			bool b7 = gf7_2_1 == gf7_3_1; // false
+			bool b8 = gf7_2_1.Equals(gf7_3_1); // false
+
+			bool cnf = !b1 && b2 && !b3 && b4 && b5 && b6 && !b7 && !b8;
+			Assert.IsTrue(cnf);
+		}
+		[TestMethod]
 		public void GetZero_GF2()
 		{
 			PrimeFiniteField gf2 = new PrimeFiniteField(2);
@@ -432,6 +457,7 @@ namespace FiniteFieldsTests
 			bool cnf = true;
 
 			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
+
 			var e1 = gf16.Get(new int[] { 1, 1, 0, 1 });
 			byte[] bytes1 = e1.GetByte();
 			var e1_fromBytes = gf16.Get(bytes1);

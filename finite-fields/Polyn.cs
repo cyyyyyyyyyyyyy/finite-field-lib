@@ -8,15 +8,14 @@ using System.Threading.Tasks;
 
 namespace finite_fields
 {
-	public class RPolyn // restricted polynomial: i dunno -_-
+	public class RPolyn//<F> where F : PrimeFiniteFieldElement
 	{
 		private readonly int _primeChar;
 		private readonly int _length;
 		private readonly PrimeFiniteField _field;
 		private readonly PrimeFiniteFieldElement[] _value;
-		public RPolyn(int Characteristic, int[] IntegerPolynomial) 
+		public RPolyn(int Characteristic, int[] IntegerPolynomial)
 		{
-			// no restrictions on characteristics upd: um...
 			if (Characteristic < 1)
 				throw new ArgumentException("Text");
 
@@ -75,7 +74,7 @@ namespace finite_fields
 
 			return res;
 		}
-		private static PrimeFiniteFieldElement[] Fill(int Length, Func<int, PrimeFiniteFieldElement> fun) 
+		private static PrimeFiniteFieldElement[] Fill(int Length, Func<int, PrimeFiniteFieldElement> fun)
 		{
 			PrimeFiniteFieldElement[] res = new PrimeFiniteFieldElement[Length];
 			for (int i = 0; i < Length; i++)
@@ -97,7 +96,6 @@ namespace finite_fields
 			if (!p1._primeChar.Equals(p2._primeChar))
 				throw new ArgumentException("text");
 
-			//yeah i know this code is bad
 			RPolyn m;
 			RPolyn l;
 			if (p1._length > p2._length)
@@ -118,12 +116,12 @@ namespace finite_fields
 			if (l._length == p1._length)
 			{
 				for (int j = l._length; j < m._length; j++)
-					res[j] = fun(p1._field.GetAdditiveIdent(), p2._value[j]); //zero
+					res[j] = fun(p1._field.GetAdditiveIdent(), p2._value[j]);
 			}
 			else
 			{
 				for (int j = l._length; j < m._length; j++)
-					res[j] = fun(p1._value[j], p1._field.GetAdditiveIdent()); //zero
+					res[j] = fun(p1._value[j], p1._field.GetAdditiveIdent());
 			}
 
 			return new RPolyn(p1._primeChar, res);
@@ -135,27 +133,27 @@ namespace finite_fields
 		public static RPolyn operator +(RPolyn pa1, RPolyn pa2)
 		{
 			return Map(pa1, pa2, (e1, e2) => e1 + e2);
-		} //maybe to just restrict the length of polyns, so that they are the same? - becuz why add redundant functionality? upd: yea ima king of auxillary bs
+		}
 		public static RPolyn operator -(RPolyn pm, RPolyn ps)
 		{
 			return Map(pm, ps, (e1, e2) => e1 - e2);
-		}			
+		}
 		public static RPolyn operator %(RPolyn p1, RPolyn p2)
 		{
-			// I guess p2 should be irreducible; upd: i don't think so
+			//p2 - can be reducible
 			if (!p1._primeChar.Equals(p2._primeChar))
 				throw new ArgumentException("text");
 
 			if (p1._length < p2._length)
 				return p1; // not really; upd: really
 
-			PrimeFiniteFieldElement[] remainder = p1._value; 
+			PrimeFiniteFieldElement[] remainder = p1._value;
 			//PrimeFiniteFieldElement[] quotient = new PrimeFiniteFieldElement[p1._length - p2._length + 1];
 			for (int i = 0; i < p1._length - p2._length + 1; i++) // ok
 			{
 				PrimeFiniteFieldElement coeff = remainder[p1._length - 1 - i] / p2._value[p2._length - 1]; // if coeff is zero?
-			    //quotient[quotient.Length - i - 1] = coeff;
-				if (coeff.GetValue() == 0) // that's what happens to yall, useless little zeros
+																										   //quotient[quotient.Length - i - 1] = coeff;
+				if (coeff.GetValue() == 0)
 					continue;
 
 				for (int j = 0; j < p2._length; j++)
@@ -171,31 +169,31 @@ namespace finite_fields
 			if (!pm1._primeChar.Equals(pm2._primeChar))
 				throw new ArgumentException("text");
 
-			var res = Fill(pm1._length + pm2._length - 1, i => pm1._field.GetAdditiveIdent()); // zero
+			var res = Fill(pm1._length + pm2._length - 1, i => pm1._field.GetAdditiveIdent());
 
 			for (int i = 0; i < pm1._length; i++)
 				for (int j = 0; j < pm2._length; j++)
 					res[i + j] += pm1._value[i] * pm2._value[j];
 
-			return new RPolyn(pm1._primeChar, res); // need to get remainder****** upd: no
+			return new RPolyn(pm1._primeChar, res);
 		}
 
 		public override bool Equals(object? obj)
 		{
-			if (obj == null)
+			if (ReferenceEquals(obj, null))
 				return false;
-			if (obj is RPolyn)
-			{
-				if (!(obj as RPolyn)._primeChar.Equals(this._primeChar)
-					||!(obj as RPolyn)._length.Equals(this._length)) // if char-cs and length of RPolyns aren't equal - not OK
-					return false;
 
-				for (int i = 0; i < this._length; i++)
-					if (!this._value[i].Equals((obj as RPolyn)._value[i])) // compares only _value, characteristic of concrete RPolyn is OK
-						return false;
-				return true;
-			}
-			return false;
+			if (obj.GetType() != this.GetType())
+				return false;
+
+			if (!(obj as RPolyn)._primeChar.Equals(this._primeChar)
+				|| !(obj as RPolyn)._length.Equals(this._length)) // if char-cs and length of RPolyns aren't equal - not OK
+				return false;
+
+			for (int i = 0; i < this._length; i++)
+				if (!this._value[i].Equals((obj as RPolyn)._value[i])) // compares only _value, characteristic of concrete RPolyn is OK
+					return false;
+			return true;
 		}
 		public override int GetHashCode()
 		{
