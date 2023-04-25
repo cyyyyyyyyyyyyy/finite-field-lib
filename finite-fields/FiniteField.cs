@@ -79,6 +79,10 @@ namespace finite_fields
 			//cutting zeros off in the constructor
 			return new FiniteFieldElement(this._primeChar, new RPolyn<PrimeFiniteFieldElement>(_primeChar, res), this);
 		}
+		//public RPolyn<FiniteFieldElement> GetPolyn(byte[] bytes)
+		//{
+		//	throw new NotImplementedException();
+		//}
 
 		public override bool Equals(object? obj)
 		{
