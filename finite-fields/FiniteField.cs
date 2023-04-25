@@ -123,19 +123,7 @@ namespace finite_fields
 
 		public static FiniteFieldElement operator *(FiniteFieldElement m1, FiniteFieldElement m2)
 		{
-			//throw new NotImplementedException();
-			if ((!m1._primeChar.Equals(m2._primeChar))||(!m1._dim.Equals(m2._dim)))
-				throw new ArgumentException("text");
-
-			var res = new PrimeFiniteFieldElement[m1._dim + m2._dim - 2];
-			for (int k = 0; k < res.Length; k++)
-				res[k] = new PrimeFiniteFieldElement(m1._primeChar, 0);
-
-			for (int i = 0; i < m1._dim; i++)
-				for (int j = 0; j < m2._dim; j++)
-					res[i + j] += m1._value[i] * m2._value[j];
-
-			return Remainder(res, m1._fpolyn); // need to get reminder******
+			throw new NotImplementedException();
 		}
 		public FiniteFieldElement Inverse()
 		{

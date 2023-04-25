@@ -75,7 +75,7 @@ namespace finite_fields
 
 		public PrimeFiniteFieldElement Inverse()
 		{
-			if (this._value != 0)
+			if (this._value == 0)
 				throw new ArgumentException("Cannot find inverse to additive neutral");
 			return new PrimeFiniteFieldElement(_primeChar, ModularExp(this._value, this._primeChar - 2, this._primeChar));
 		}
