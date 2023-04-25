@@ -51,6 +51,7 @@ namespace finite_fields
 		private readonly int _value;
 		public PrimeFiniteFieldElement(int PrimeFieldCharacterictic, int IntegerValue, PrimeFiniteField FiniteField)
 		{
+			//clone FiniteField
 			//PrimeFieldCharacteristic should be prime
 			if (PrimeFieldCharacterictic < 1)
 				throw new ArgumentException("Error in PrimeFiniteFieldElement: PrimeFieldCharacteristic should be prime and greater than 1");
@@ -65,16 +66,14 @@ namespace finite_fields
 			if (_value < 0)
 				_value += _primeChar;
 		}
-		public int[] InternalGetValue() => new[] { _value };
+		//public int[] InternalGetValue() => new[] { _value };
 		public int GetValue() => _value;
 		public int GetCharacteristic() => _primeChar;
 		public IFiniteField<PrimeFiniteFieldElement> GetField() => _field;
-		public bool CorrectnessCheck(PrimeFiniteFieldElement other)  
-		{
-			throw new NotImplementedException();
-		}
+		public bool IsWellDefinedWith(PrimeFiniteFieldElement other) => this._field.Equals(other._field);
 		private static int ModularExp(int b, int exp, int m)
 		{
+			//need to refactor - not effective
 			//int exp = _primeChar - 2;
 			int res = 1;
 			while (exp > 0)
@@ -90,14 +89,14 @@ namespace finite_fields
 			=> e;
 		public static PrimeFiniteFieldElement operator +(PrimeFiniteFieldElement a1, PrimeFiniteFieldElement a2)
 		{
-			if (!a1._primeChar.Equals(a2._primeChar))
+			if (!a1.IsWellDefinedWith(a2))
 				throw new ArgumentException("Incorrect characteristics");
 			return new PrimeFiniteFieldElement(a1._primeChar, (a1._value + a2._value) % a1._primeChar, a1._field);
 		}
 
 		public static PrimeFiniteFieldElement operator *(PrimeFiniteFieldElement m1, PrimeFiniteFieldElement m2)
 		{
-			if (!m1._primeChar.Equals(m2._primeChar))
+			if (!m1.IsWellDefinedWith(m2))
 				throw new ArgumentException("Incorrect characteristics");
 			return new PrimeFiniteFieldElement(m1._primeChar, (m1._value * m2._value) % m1._primeChar, m1._field);
 		}
@@ -124,10 +123,10 @@ namespace finite_fields
 				return false;
 			//if (obj.GetType() != this.GetType())
 			//	return false;
-			if (obj is not PrimeFiniteFieldElement pffe)
+			if (obj is not PrimeFiniteFieldElement pffe) // pffe = prime finite field element
 				return false;
 
-			if (pffe._primeChar.Equals(this._primeChar) //self-explanatory
+			if (pffe.IsWellDefinedWith(this) //self-explanatory: correctness and value check
 				&& pffe._value.Equals(this._value))
 				return true;
 

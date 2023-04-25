@@ -51,8 +51,13 @@ namespace finite_fields
 
 			//dimension correctness?
 			//characteristics correctness
-			for (int i = 0; i < ElementPolynomialValue.Length; i++)
-				if (!ElementPolynomialValue[i].GetCharacteristic().Equals(_primeChar))
+			//for (int i = 0; i < ElementPolynomialValue.Length; i++)
+			//	if (!ElementPolynomialValue[i].GetCharacteristic().Equals(_primeChar))
+			//		throw new ArgumentException("Text");
+
+			//correctness
+			for (int i = 0; i < ElementPolynomialValue.Length - 1; i++)
+				if (!ElementPolynomialValue[i].IsWellDefinedWith(ElementPolynomialValue[i + 1])) //OK
 					throw new ArgumentException("Text");
 
 			_field = ElementPolynomialValue[0].GetField();
@@ -72,19 +77,7 @@ namespace finite_fields
 		}
 		public int GetCharacteristic() => _primeChar;
 		public int GetLength() => _length;
-		public FE[] GetValue()
-		{
-			//int[] res = new int[_length];
-			//for (int i = 0; i < _length; i++)
-			//	res[i] = _value[i].InternalGetValue(); //um
-
-			//return res;
-
-			//for (int k = 0; k < _length; k++)
-			//	if ()
-			//throw new NotImplementedException();
-			return _value;
-		}
+		public FE[] GetValue() => _value;
 		private static FE[] Fill(int Length, Func<int, FE> fun)
 		{
 			FE[] res = new FE[Length];
@@ -197,15 +190,15 @@ namespace finite_fields
 
 			//if (obj.GetType() != this.GetType())
 			//	return false;
-			if (obj is not RPolyn<FE> pffe)
+			if (obj is not RPolyn<FE> p)
 				return false;
 
-			if (!pffe._primeChar.Equals(this._primeChar)
-				|| !pffe._length.Equals(this._length)) // if char-cs and length of RPolyns aren't equal - not OK
+			if (!p._primeChar.Equals(this._primeChar)
+				|| !p._length.Equals(this._length)) // if char-cs and length of RPolyns aren't equal - not OK
 				return false;
 
 			for (int i = 0; i < this._length; i++)
-				if (!this._value[i].Equals(pffe._value[i])) // compares only _value, characteristic of concrete RPolyn is OK
+				if (!this._value[i].Equals(p._value[i])) // compares only _value, characteristic of concrete RPolyn is OK
 					return false;
 			return true;
 		}

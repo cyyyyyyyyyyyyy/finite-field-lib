@@ -15,18 +15,11 @@ namespace finite_fields
 		IMultiplyOperators<E, E, E>,
 		IDivisionOperators<E, E, E>
 		where E :
-		//IUnaryPlusOperators<E, E>,
-		//IUnaryNegationOperators<E, E>,
-		//IAdditionOperators<E, E, E>,
-		//ISubtractionOperators<E, E, E>,
-		//IMultiplyOperators<E, E, E>,
-		//IDivisionOperators<E, E, E>,
 		IFiniteFieldElement<E>
 	{
-		internal int[] InternalGetValue();
 		public int GetCharacteristic();
 		public IFiniteField<E> GetField();
-		public bool CorrectnessCheck(E other);
+		public bool IsWellDefinedWith(E other);
 		public E Inverse();
 	}
 
@@ -36,8 +29,4 @@ namespace finite_fields
 		public T GetAdditiveIdent();
 		public T GetMultiplicativeIdent();
 	}
-	//public interface IFieldOfElement<E, F> where E : IFieldElement<E> where F : IField<E>
-	//{
-	//	public F GetField();
-	//}
 }
