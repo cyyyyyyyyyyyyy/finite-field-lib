@@ -1,4 +1,6 @@
 using finite_fields;
+using System.ComponentModel.DataAnnotations;
+
 namespace FiniteFieldsTests
 {
 	[TestClass]
@@ -192,11 +194,27 @@ namespace FiniteFieldsTests
 		}
 		[TestMethod]
 
-		//cutoffmethod
 		public void CutOffZeros_Polyn()
 		{
 			var res = new RPolyn(7, new int[] { 0, 6, 3, 0, 1, 1, 0, 0 });
 			var expectedres = new RPolyn(7, new int[] { 0, 6, 3, 0, 1, 1 });
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void UnaryMinus_Polyn()
+		{
+			var p = new RPolyn(7, new int[] { 6, 1, 3, 2, 0, 5 });
+
+			var res = p - p;
+			var expectedres = new RPolyn(7, new int[] { 0 });
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void UnaryPlus_Polyn()
+		{
+			var expectedres = new RPolyn(7, new int[] { 6, 1, 3, 2, 0, 5 });
+			var res = +expectedres;
 
 			Assert.AreEqual(expectedres, res);
 		}
@@ -253,6 +271,75 @@ namespace FiniteFieldsTests
 			var expectedres = new RPolyn(7, new int[] { 2, 3 });
 
 			Assert.AreEqual(expectedres, res);
+		}
+
+		[TestMethod]
+		public void GetZero_GF16()
+		{
+			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
+			var res = gf16.GetAdditiveNeutral();
+			var expectedres = new FiniteFieldElement(2, new RPolyn(2, new int[] { 0 }), new RPolyn (2, new int[] { 1, 1, 0, 0, 1 }));
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void GetOne_GF16()
+		{
+			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
+			var res = gf16.GetAdditiveNeutral();
+			var expectedres = new FiniteFieldElement(2, new RPolyn(2, new int[] { 0 }), new RPolyn(2, new int[] { 1, 1, 0, 0, 1 }));
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void Get_GF16()
+		{
+			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
+			var res = gf16.Get(new int[] {0, 1, 1, 0, 1, 1});
+			var expectedres = new FiniteFieldElement(2, new RPolyn(2, new int[] { 1, 1 }), new RPolyn(2, new int[] { 1, 1, 0, 0, 1 }));
+
+			Assert.AreEqual(expectedres, res);	
+		}
+		[TestMethod]
+		public void UnaryPlus_GF16()
+		{
+			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
+			var expectedres = gf16.Get(new int[] { 0, 1, 1, 0, 1, 1 });
+			var res = +expectedres;
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void UnaryMinus_GF16()
+		{
+			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
+			var e = gf16.Get(new int[] { 0, 1, 1, 1});
+			var res = e - e;
+			var expectedres = gf16.GetAdditiveNeutral();
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void BinaryPlus_GF16()
+		{
+			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
+			var a = gf16.Get(new int[] { 0, 1, 1});
+			var b = gf16.Get(new int[] { 0, 1, 0, 1});
+
+			var res = a + b;
+			var expectedres = gf16.Get(new int[] { 0, 0, 1, 1});
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void BinaryMinus_GF16()
+		{
+			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
+			var a = gf16.Get(new int[] { 0, 1, 1 });
+			var b = gf16.Get(new int[] { 0, 1, 1, 1 });
+
+			var res = a - b;
+			var expectedres = gf16.Get(new int[] {0, 0, 0, 1});
 		}
 	}
 }
