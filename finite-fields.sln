@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "finite-fields", "finite-fields\finite-fields.csproj", "{4A197210-6609-405A-8C21-1F637E7EACDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "finite-fields", "finite-fields\finite-fields.csproj", "{4A197210-6609-405A-8C21-1F637E7EACDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "finite-fields-tests", "finite-fields-tests\finite-fields-tests.csproj", "{FE379F11-03FB-489A-A988-1277EAEBBF39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "finite-fields-tests", "finite-fields-tests\finite-fields-tests.csproj", "{FE379F11-03FB-489A-A988-1277EAEBBF39}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "crc-lib", "crs-lib\crc-lib.csproj", "{1B4AC9F5-0501-4A52-9776-3F3C713C804E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{FE379F11-03FB-489A-A988-1277EAEBBF39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE379F11-03FB-489A-A988-1277EAEBBF39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE379F11-03FB-489A-A988-1277EAEBBF39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B4AC9F5-0501-4A52-9776-3F3C713C804E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B4AC9F5-0501-4A52-9776-3F3C713C804E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B4AC9F5-0501-4A52-9776-3F3C713C804E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B4AC9F5-0501-4A52-9776-3F3C713C804E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

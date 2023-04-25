@@ -314,7 +314,7 @@ namespace FiniteFieldsTests
 		{
 			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
 			var res = gf16.GetAdditiveIdent();
-			var expectedres = new FiniteFieldElement(2, new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 0 }), new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 1, 1, 0, 0, 1 }));
+			var expectedres = new FiniteFieldElement(2, new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 0 }), gf16);
 
 			Assert.AreEqual(expectedres, res);
 		}
@@ -323,7 +323,7 @@ namespace FiniteFieldsTests
 		{
 			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
 			var res = gf16.GetAdditiveIdent();
-			var expectedres = new FiniteFieldElement(2, new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 0 }), new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 1, 1, 0, 0, 1 }));
+			var expectedres = new FiniteFieldElement(2, new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 0 }), gf16);
 
 			Assert.AreEqual(expectedres, res);
 		}
@@ -332,7 +332,7 @@ namespace FiniteFieldsTests
 		{
 			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
 			var res = gf16.Get(new int[] {0, 1, 1, 0, 1, 1});
-			var expectedres = new FiniteFieldElement(2, new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 1, 1 }), new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 1, 1, 0, 0, 1 }));
+			var expectedres = new FiniteFieldElement(2, new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 1, 1 }), gf16);
 
 			Assert.AreEqual(expectedres, res);	
 		}
@@ -416,10 +416,10 @@ namespace FiniteFieldsTests
 		}
 
 		[TestMethod]
-		public void GetBytesTest_GF16()
+		public void GetBytesTest_GF256()
 		{
-			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
-			var e = gf16.Get(new int[] { 1, 1, 0, 1});
+			var gf256 = new FiniteField(2, new int[] { 1, 0, 1, 1, 1, 0, 0, 0, 1}); 
+			var e = gf256.Get(new int[] { 1, 1, 0, 1});
 			byte[] res = e.GetByte();
 			byte[] expectedres = new byte[1] { 11 };
 
@@ -434,22 +434,23 @@ namespace FiniteFieldsTests
 		{
 			var gf512 = new FiniteField(2, new int[] { 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 });
 			var e = gf512.Get(new int[] { 1, 0, 1, 1, 0, 1, 0, 0, 1 });
-			byte[] res = e.GetByte();
-			byte[] expectedres = new byte[2] { 45, 1 };
-
-			bool cnf = true;
-			for (int i = 0; i < res.Length; i++)
-				cnf = cnf && res[i].Equals(expectedres[i]);
-
-			Assert.IsTrue(cnf);
+			bool flag = false;
+			try
+			{
+				byte[] res = e.GetByte();
+			} catch (ArgumentException ex)
+			{
+				flag = true;
+			}
+			Assert.IsTrue(flag);
 		}
 
 		[TestMethod]
-		public void GetBytesTest_GF2_25()
+		public void GetBytesTest_GF2_24()
 		{
-			var gf2_25 = new FiniteField(2, 
-				new int[] { 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 });
-			var e = gf2_25.Get(
+			var gf2_24 = new FiniteField(2, 
+				new int[] { 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }); //x^25 + x^3 + 1
+			var e = gf2_24.Get(
 				new int[] { 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1 });
 
 			byte[] res = e.GetByte();
@@ -465,37 +466,155 @@ namespace FiniteFieldsTests
 		[TestMethod]
 		public void GetFromBytesTest()
 		{
+			//rewrite
 			bool cnf = true;
 
-			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
-
-			var e1 = gf16.Get(new int[] { 1, 1, 0, 1 });
-			byte[] bytes1 = e1.GetByte();
-			var e1_fromBytes = gf16.Get(bytes1);
-			cnf = cnf && e1_fromBytes.Equals(e1);
-
-			var gf512 = new FiniteField(2, new int[] { 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 });
-			var e2 = gf512.Get(new int[] { 1, 0, 1, 1, 0, 1, 0, 0, 1 });
+			var gf256 = new FiniteField(2, new int[] { 1, 0, 1, 1, 1, 0, 0, 0, 1 });
+			var e2 = gf256.Get(new int[] { 1, 0, 1, 1, 0, 1, 0, 0, 1 }); //length is 9 so it will get the remainder
 			byte[] bytes2 = e2.GetByte();
-			var e2_fromBytes = gf512.Get(bytes2);
+			var e2_fromBytes = gf256.Get(bytes2);
 			cnf = cnf && e2_fromBytes.Equals(e2);
 
-			var gf2_25 = new FiniteField(2,
+			var gf2_24 = new FiniteField(2,
 				new int[] { 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 });
-			var e3 = gf2_25.Get(
+			var e3 = gf2_24.Get(
 				new int[] { 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1 });
 
 			byte[] bytes3 = e3.GetByte();
-			var e3_fromBytes = gf2_25.Get(bytes3);
+			var e3_fromBytes = gf2_24.Get(bytes3);
 			cnf = cnf && e3_fromBytes.Equals(e3);
 
 			Assert.IsTrue(cnf);
 		}
 
 		[TestMethod]
-		public void PolynFFE_AJSFN()
+		public void PolynFFE_BinaryPlus()
 		{
+			var gf256 = new FiniteField(2, new int[] { 1, 0, 1, 1, 1, 0, 0, 0, 1 });
+			var p1 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] { 
+				gf256.Get(new byte[] { 56 }),
+				gf256.Get(new byte[] { 140 }),
+				gf256.Get(new byte[] { 1, }),
+				gf256.Get(new byte[] { 13 })
+			});
 
+			var p2 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+				gf256.Get(new byte[] { 0 }),
+				gf256.Get(new byte[] { 137 }),
+				gf256.Get(new byte[] { 201 }),
+				gf256.Get(new byte[] { 1 })
+			});
+
+			var res = p1 + p2;
+			//var bres = res.GetValue().Select(x => x.GetByte()).ToArray();
+			var expectedres1 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+				gf256.Get(new byte[] { 56 }) + gf256.Get(new byte[] { 0 }),
+				gf256.Get(new byte[] { 140 }) + gf256.Get(new byte[] { 137 }),
+				gf256.Get(new byte[] { 1, }) + gf256.Get(new byte[] { 201 }),
+				gf256.Get(new byte[] { 13 }) + gf256.Get(new byte[] { 1 })
+			});
+			var expectedres2 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+				gf256.Get(new byte[] { 56 }),
+				gf256.Get(new byte[] { 5 }),
+				gf256.Get(new byte[] { 200, }),
+				gf256.Get(new byte[] { 12 })
+			}); // it's just xor
+
+			bool cnf = res.Equals(expectedres1) && expectedres1.Equals(expectedres2);
+			Assert.IsTrue(cnf);
+		}
+		[TestMethod]
+		public void PolynFFE_BinaryMinus()
+		{
+			var gf256 = new FiniteField(2, new int[] { 1, 0, 1, 1, 1, 0, 0, 0, 1 });
+			var p1 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+				gf256.Get(new byte[] { 56 }),
+				gf256.Get(new byte[] { 140 }),
+				gf256.Get(new byte[] { 1 }),
+				gf256.Get(new byte[] { 13 })
+			});
+
+			var p2 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+				gf256.Get(new byte[] { 0 }),
+				gf256.Get(new byte[] { 137 }),
+				gf256.Get(new byte[] { 201 }),
+				gf256.Get(new byte[] { 1 })
+			});
+
+			var res = p1 - p2;
+			//var bres = res.GetValue().Select(x => x.GetByte()).ToArray();
+			var expectedres1 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+				gf256.Get(new byte[] { 56 }) - gf256.Get(new byte[] { 0 }),
+				gf256.Get(new byte[] { 140 }) - gf256.Get(new byte[] { 137 }),
+				gf256.Get(new byte[] { 1 }) - gf256.Get(new byte[] { 201 }),
+				gf256.Get(new byte[] { 13 }) - gf256.Get(new byte[] { 1 })
+			});
+			var expectedres2 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+				gf256.Get(new byte[] { 56 }),
+				gf256.Get(new byte[] { 5 }),
+				gf256.Get(new byte[] { 200, }),
+				gf256.Get(new byte[] { 12 })
+			}); // it's just xor
+
+			bool cnf = res.Equals(expectedres1) && expectedres1.Equals(expectedres2);
+			Assert.IsTrue(cnf);
+		}
+		[TestMethod]
+		public void PolynFFE_Asterisk()
+		{
+			var gf256 = new FiniteField(2, new int[] { 1, 0, 1, 1, 1, 0, 0, 0, 1 });
+			var p1 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+				gf256.Get(new byte[] { 37 }),
+				gf256.Get(new byte[] { 212 }),
+				gf256.Get(new byte[] { 13 }),
+				gf256.Get(new byte[] { 70 })
+			});
+
+			var p2 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+				gf256.Get(new byte[] { 1 }),
+				gf256.Get(new byte[] { 0 }),
+				gf256.Get(new byte[] { 123 }),
+				gf256.Get(new byte[] { 51 })
+			});
+
+			var res = p1 * p2;
+			var expectedres = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+				gf256.Get(new byte[] { 37 }),
+				gf256.Get(new byte[] { 212 }),
+				gf256.Get(new byte[] { 92 }) ,
+				gf256.Get(new byte[] { 101 }),
+				gf256.Get(new byte[] { 74 }),
+				gf256.Get(new byte[] { 214 }),
+				gf256.Get(new byte[] { 246 })
+			});
+			Assert.IsTrue(res.Equals(expectedres));
+		}
+
+		[TestMethod]
+		public void PolynFFE_Remainder()
+		{
+			var gf256 = new FiniteField(2, new int[] { 1, 0, 1, 1, 1, 0, 0, 0, 1 });
+			var p1 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+				gf256.Get(new byte[] { 37 }),
+				gf256.Get(new byte[] { 212 }),
+				gf256.Get(new byte[] { 13 }),
+				gf256.Get(new byte[] { 70 })
+			});
+
+			var p2 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+				gf256.Get(new byte[] { 1 }),
+				gf256.Get(new byte[] { 0 }),
+				gf256.Get(new byte[] { 123 }),
+				gf256.Get(new byte[] { 51 })
+			});
+
+			var res = p2 % p1;
+			var expectedres = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+				gf256.Get(new byte[] { 30 }),
+				gf256.Get(new byte[] { 199 }),
+				gf256.Get(new byte[] { 74 })
+			});
+			Assert.IsTrue(res.Equals(expectedres));
 		}
 	}
 }
