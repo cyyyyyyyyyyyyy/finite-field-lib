@@ -145,8 +145,10 @@ namespace finite_fields
 		public static RPolyn<FE> operator %(RPolyn<FE> p1, RPolyn<FE> p2)
 		{
 			//p2 - can be reducible
-			if (!p1._primeChar.Equals(p2._primeChar)) // 
+			if (!p1._primeChar.Equals(p2._primeChar)) // check for zero
 				throw new ArgumentException("text");
+			if ((p2._value.Length == 1) && (p2._value[0].Equals(p2._field.GetAdditiveIdent())))
+				throw new ArgumentException("Cannot divide by zero");
 
 			if (p1._length < p2._length)
 				return p1; // not really; upd: really
