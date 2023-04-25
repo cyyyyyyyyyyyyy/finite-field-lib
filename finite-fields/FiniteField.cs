@@ -17,7 +17,6 @@ namespace finite_fields
 		private readonly int _primeChar;
 		private readonly int _dim;
 		private readonly RPolyn _polyn;
-		private readonly PrimeFiniteField _primefield;
 
 		public FiniteField(int PrimeFieldCharacterictic, int[] IntegerPolynomial)
 		{
@@ -26,30 +25,13 @@ namespace finite_fields
 
 			_primeChar = PrimeFieldCharacterictic;
 
-			//_dim = IntegerPolynomial.Length - 1;
-			//var polyn = new PrimeFiniteFieldElement[_dim];
-			//for (int i = 1; i < _dim; i++)
-			//	polyn[i] = new(_primeChar, IntegerPolynomial[i]);
-			//_polyn = polyn;//new FiniteFieldElement(_primeChar, polyn);
-
-			_primefield = new PrimeFiniteField(_primeChar);
-
 			_polyn = new RPolyn(_primeChar, IntegerPolynomial);
 			_dim = _polyn.GetLength() - 1;
 
 		}
 		public int GetCharacteristic() => _primeChar;
 		public int GetDimension() => _dim;
-		public int[] GetPolynomial()
-		{
-			//throw new NotImplementedException();
-			//var res = new int[_dim];
-			//for (int i = 1; i < _dim; i++)
-			//	res[i] = this._polyn[i].GetValue();
-
-			//return res;
-			return _polyn.GetValue();
-		}
+		public int[] GetPolynomial() => _polyn.GetValue();
 
 		public FiniteFieldElement GetAdditiveNeutral()
 		{
@@ -92,56 +74,53 @@ namespace finite_fields
 
 		public int GetCharacteristic() => _primeChar;
 		public int GetDimension() => _dim;
-		public int[] GetValue()
+		public int[] GetValue() => _value.GetValue();
+		private static RPolyn ModularExp(RPolyn b, int exp, RPolyn m)
 		{
-			//var res = new int[_dim];
-			//for (int i = 1; i < _dim; i++)
-			//	res[i] = this._value[i].GetValue();
-
-			//return res;
-			return _value.GetValue();
+			//int exp = _primeChar - 2;
+			var gf = new FiniteField(b.GetCharacteristic(), m.GetValue());
+			var res = gf.GetMultiplicativeNeutral()._value;
+			while (exp > 0)
+			{
+				if (exp % 2 == 1)
+					res = (res * b) % m;
+				exp = exp >> 1;
+				b = (b * b) % m;
+			}
+			return res;
 		}
-		/*private FiniteFieldElement Map(Func<PrimeFiniteFieldElement, int, PrimeFiniteFieldElement> fun)
-		{
-			var res = new PrimeFiniteFieldElement[_dim];
-			for (int i = 1; i < _dim; i++)
-				res[i] = fun(this._value[i], i);
-
-			return new FiniteFieldElement(this._primeChar, res, this._fpolyn);
-		}*/
 		public static FiniteFieldElement operator +(FiniteFieldElement pe)
 			=> pe;
 		public static FiniteFieldElement operator -(FiniteFieldElement pe)
-			=> new FiniteFieldElement(pe._primeChar, -pe._value, pe._fpolyn); //pe.Map((e, i) => -e); 
+			=> new FiniteFieldElement(pe._primeChar, -pe._value, pe._fpolyn);
 		public static FiniteFieldElement operator +(FiniteFieldElement pa1, FiniteFieldElement pa2)
-		//=> pa1.Map((e, i) => e + pa2._value[Array.IndexOf(pa1._value, e)]);
-		//=> pa1._primeChar.Equals(pa2._primeChar) && pa1._dim.Equals(pa2._dim) ? 
-		//   pa1.Map((e, i) => e + pa2._value[i]) : throw new ArgumentException("text");
 		{
-			if (!pa1._primeChar.Equals(pa2._primeChar) || !pa1._dim.Equals(pa2._dim)) // do i need to check polynimial equality?
+			if (!pa1._primeChar.Equals(pa2._primeChar) || !pa1._dim.Equals(pa2._dim)) // do i need to check factor polynimial equality?
 				throw new ArgumentException("text");
 			return new FiniteFieldElement(pa1._primeChar, pa1._value + pa2._value, pa1._fpolyn);
 		}
 		public static FiniteFieldElement operator -(FiniteFieldElement pm, FiniteFieldElement ps)
-		//=> pm.Map(e => e - ps._value[Array.IndexOf(ps._value, e)]);
-		//=> pm._primeChar.Equals(ps._primeChar) && pm._dim.Equals(ps._dim) ? 
-		//   pm.Map((e, i) => e - ps._value[i]) : throw new ArgumentException("text");
 		{
-			if (!pm._primeChar.Equals(ps._primeChar) || !pm._dim.Equals(ps._dim)) 
-				throw new ArgumentException("text");
-			return new FiniteFieldElement(pm._primeChar, pm._value - ps._value, pm._fpolyn);
+			return pm + (-ps);
 		}
 		public static FiniteFieldElement operator *(FiniteFieldElement m1, FiniteFieldElement m2)
 		{
-			throw new NotImplementedException();
+			if (!m1._primeChar.Equals(m2._primeChar) || !m1._dim.Equals(m2._dim))
+				throw new ArgumentException("text");
+
+			return new FiniteFieldElement(m1._primeChar, m1._value * m2._value, m1._fpolyn);
 		}
 		public FiniteFieldElement Inverse()
 		{
-			throw new NotImplementedException();
+			var gf = new FiniteField(this._primeChar, this._fpolyn.GetValue());
+			if (this.Equals(gf.GetAdditiveNeutral()))
+				throw new ArgumentException("text");
+
+			return new FiniteFieldElement(this._primeChar, ModularExp(this._value, (int)(Math.Pow(this._primeChar, this._dim)) - 2, this._fpolyn), this._fpolyn);
 		}
 		public static FiniteFieldElement operator /(FiniteFieldElement d1, FiniteFieldElement d2)
 		{
-			throw new NotImplementedException();
+			return d1 * d2.Inverse();
 		}
 		public override bool Equals(object? obj)
 		{
@@ -162,6 +141,10 @@ namespace finite_fields
 				}
 				return false;
 			}
+		}
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
 		}
 	}
 	class BinaryFiniteField : FiniteField

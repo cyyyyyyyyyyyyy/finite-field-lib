@@ -341,5 +341,42 @@ namespace FiniteFieldsTests
 			var res = a - b;
 			var expectedres = gf16.Get(new int[] {0, 0, 0, 1});
 		}
+		[TestMethod]
+		public void Asterisk_GF16()
+		{
+			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
+			var a = gf16.Get(new int[] { 1, 1, 0, 1 });
+			var b = gf16.Get(new int[] { 0, 1, 1, 1 });
+
+			var res = a * b;
+			var expectedres = gf16.Get(new int[] { 0, 0, 0, 1});
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+
+		public void Inverse_GF16()
+		{
+			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
+			var a = gf16.Get(new int[] { 1, 0, 0, 1 });
+			var inv_a = a.Inverse();
+
+			var res = inv_a * a;
+			var expectedres = gf16.GetMultiplicativeNeutral();
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void Slash_GF16()
+		{
+			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
+			var d1 = gf16.Get(new int[] { 1, 1, 0, 1});
+			var d2 = gf16.Get(new int[] { 0, 0, 0, 1});
+
+			var res = d1 / d2;
+			var expectedres = gf16.Get(new int[] { 1, 1});
+
+			Assert.AreEqual(expectedres, res);
+		}
 	}
 }

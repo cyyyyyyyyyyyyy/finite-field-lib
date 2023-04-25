@@ -186,7 +186,8 @@ namespace finite_fields
 				return false;
 			if (obj is RPolyn)
 			{
-				if (!(obj as RPolyn)._primeChar.Equals(this._primeChar)) // if char-cs of RPolyns aren't equal - not OK
+				if (!(obj as RPolyn)._primeChar.Equals(this._primeChar)
+					||!(obj as RPolyn)._length.Equals(this._length)) // if char-cs and length of RPolyns aren't equal - not OK
 					return false;
 
 				for (int i = 0; i < this._length; i++)
