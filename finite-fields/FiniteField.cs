@@ -1,17 +1,4 @@
-﻿using finite_fields;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
-using System.Globalization;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace finite_fields
+﻿namespace finite_fields
 {
 	public class FiniteField
 	{
@@ -35,11 +22,11 @@ namespace finite_fields
 		public int[] GetPolynomial() => _polyn.GetValue();
 
 		public FiniteFieldElement GetAdditiveNeutral()
-			=> new FiniteFieldElement(_primeChar, new RPolyn(_primeChar, new int[] { 0 }), _polyn);
+			=> new (_primeChar, new RPolyn(_primeChar, new int[] { 0 }), _polyn);
 		public FiniteFieldElement GetMultiplicativeNeutral()
-			=> new FiniteFieldElement(_primeChar, new RPolyn(_primeChar, new int[] { 1 }), _polyn);
+			=> new (_primeChar, new RPolyn(_primeChar, new int[] { 1 }), _polyn);
 		public FiniteFieldElement Get(int[] IntegerPolynomial) 
-			=> new FiniteFieldElement(_primeChar, new RPolyn(_primeChar, IntegerPolynomial), _polyn);
+			=> new (_primeChar, new RPolyn(_primeChar, IntegerPolynomial), _polyn);
 		public FiniteFieldElement Get(byte[] bytes)
 		{
 			if (this._primeChar != 2)
@@ -147,7 +134,7 @@ namespace finite_fields
 			{
 				if (exp % 2 == 1)
 					res = (res * b) % m;
-				exp = exp >> 1;
+				exp >>= 1;
 				b = (b * b) % m;
 			}
 			return res;
@@ -155,7 +142,7 @@ namespace finite_fields
 		public static FiniteFieldElement operator +(FiniteFieldElement pe)
 			=> pe;
 		public static FiniteFieldElement operator -(FiniteFieldElement pe)
-			=> new FiniteFieldElement(pe._primeChar, -pe._value, pe._fpolyn);
+			=> new (pe._primeChar, -pe._value, pe._fpolyn);
 		public static FiniteFieldElement operator +(FiniteFieldElement pa1, FiniteFieldElement pa2)
 		{
 			if (!pa1._primeChar.Equals(pa2._primeChar) || !pa1._dim.Equals(pa2._dim)) // do i need to check factor polynimial equality?
