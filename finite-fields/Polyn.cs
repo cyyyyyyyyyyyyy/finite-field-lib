@@ -125,6 +125,7 @@ namespace finite_fields
 
 			return new RPolyn(p1._primeChar, res);
 		}
+		//
 		public static RPolyn operator +(RPolyn pe)
 			=> pe;
 		public static RPolyn operator -(RPolyn pe)
@@ -139,36 +140,19 @@ namespace finite_fields
 		}			
 		public static RPolyn operator %(RPolyn p1, RPolyn p2)
 		{
-			throw new NotImplementedException();
 			// I guess p2 should be irreducible
 			if (!p1._primeChar.Equals(p2._primeChar))
 				throw new ArgumentException("text");
-
-			/*int p1LeadIndex = p1._length;
-			int p1LeadCoef;
-			do
-			{
-				p1LeadIndex--;
-				p1LeadCoef = p1._value[p1LeadIndex].GetValue();
-			} while ((p1LeadCoef != 0)&&(p1LeadIndex >= 0));
-
-			int p2LeadIndex = p2._length;
-			int p2LeadCoef;
-			do
-			{
-				p2LeadIndex--;
-				p2LeadCoef = p2._value[p2LeadIndex].GetValue();
-			} while ((p2LeadCoef != 0)&&(p2LeadIndex >= 0));*/
 
 			if (p1._length < p2._length)
 				return p1; // not really
 
 			PrimeFiniteFieldElement[] remainder = p1._value; // array?
-			//quotient = new double[p1leadindex - p2leadindex + 1];
+			//PrimeFiniteFieldElement[] quotient = new PrimeFiniteFieldElement[p1._length - p2._length + 1];
 			for (int i = 0; i < p1._length - p2._length + 1; i++) // ok
 			{
 				PrimeFiniteFieldElement coeff = remainder[p1._length - 1 - i] / p2._value[p2._length - 1]; // if coeff is zero?
-			    //quotient[quotient.length - i - 1] = coeff;
+			    //quotient[quotient.Length - i - 1] = coeff;
 				if (coeff.GetValue() == 0)
 					continue;
 
@@ -178,17 +162,12 @@ namespace finite_fields
 				}
 			}
 
-
+			return new RPolyn(p1._primeChar, remainder);
 		}
 		public static RPolyn operator *(RPolyn pm1, RPolyn pm2)
 		{
 			if (!pm1._primeChar.Equals(pm2._primeChar))
 				throw new ArgumentException("text");
-
-			//fill
-			//var res = new PrimeFiniteFieldElement[pm1._length + pm2._length - 2];
-			//for (int k = 0; k < res.Length; k++)
-			//	res[k] = new PrimeFiniteFieldElement(pm1._primeChar, 0);
 
 			var res = Fill(pm1._length + pm2._length - 1, i => new PrimeFiniteFieldElement(pm1._primeChar, 0));
 
@@ -209,6 +188,10 @@ namespace finite_fields
 						return false;
 				return true;
 			//return false;
+		}
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
 		}
 	}
 }

@@ -232,5 +232,27 @@ namespace FiniteFieldsTests
 			var expectedres = new RPolyn(7, new int[] { 2, 4, 3, 0, 3, 6, 4 });
 			Assert.AreEqual(expectedres, res);
 		}
+		[TestMethod]
+		public void RemainderTest1_Polyn()
+		{
+			var p1 = new RPolyn(7, new int[] { 3, 2, 3 });
+			var p2 = new RPolyn(7, new int[] { 1, 2, 6, 4, 4 });
+
+			var res = p1 % p2;
+			var expectedres = new RPolyn(7, new int[] { 3, 2, 3 });
+
+			Assert.AreEqual(expectedres, res);
+		}
+		[TestMethod]
+		public void RemainderTest2_Polyn()
+		{
+			var p1 = new RPolyn(7, new int[] { 3, 2, 1 });
+			var p2 = new RPolyn(7, new int[] { 1, 2, 6, 4, 4 });
+
+			var res = p2 % p1;
+			var expectedres = new RPolyn(7, new int[] { 2, 3 });
+
+			Assert.AreEqual(expectedres, res);
+		}
 	}
 }
