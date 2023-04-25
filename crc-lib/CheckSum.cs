@@ -10,9 +10,9 @@ namespace crc_lib
 		private readonly int[] _factorpolyn = { 1, 0, 1, 1, 1, 0, 0, 0, 1 };
 		private readonly FiniteField gf256;
 		private readonly RPolyn<FiniteFieldElement> _mainpolyn;
-		public CheckSum(byte[] bytes) 
+		public CheckSum(byte[] bytes) //little-endian
 		{
-			if (bytes.Length != _mpl - 1) throw new ArgumentException("");
+			if (bytes.Length != _mpl - 1) throw new ArgumentException(""); //if bytes = { 0, 0, 0, 0} ?
 
 			gf256 = new FiniteField(_ffc, _factorpolyn);
 			var ElementPolyn = new FiniteFieldElement[_mpl];
@@ -41,7 +41,7 @@ namespace crc_lib
 			byte[] result = PadRight(remainderValue, _mpl - 1);
 			return result;
 		}
-		private byte[] PadRight(byte[] src, int count) // count is 4
+		internal byte[] PadRight(byte[] src, int count) // count is 4
 		{
 			byte[] result = new byte[count];
 			for (int i = 0; i < src.Length; i++) 
