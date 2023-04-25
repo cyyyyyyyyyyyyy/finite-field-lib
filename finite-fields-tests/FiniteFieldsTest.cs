@@ -32,6 +32,17 @@ namespace FiniteFieldsTests
 			Assert.IsTrue(cnf);
 		}
 		[TestMethod]
+		public void PFF_Equals()
+		{
+			var gf11_1 = new PrimeFiniteField(11);
+			var gf11_2 = new PrimeFiniteField(11);
+			var gf13 = new PrimeFiniteField(13);
+
+			bool cnf = gf11_1.Equals(gf11_2) && (!gf11_1.Equals(gf13));
+			Assert.IsTrue(cnf);
+		}
+
+		[TestMethod]
 		public void GetZero_GF2()
 		{
 			PrimeFiniteField gf2 = new PrimeFiniteField(2);
@@ -212,8 +223,8 @@ namespace FiniteFieldsTests
 		[TestMethod]
 		public void Initialization_Polyn()
 		{
-			var p = new RPolyn(7, new int[] { 12, 7, -12, 67, -90 });
-			var exp = new RPolyn(7, new int[] { 5, 0, 2, 4, 1 });
+			var p = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 12, 7, -12, 67, -90 });
+			var exp = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 5, 0, 2, 4, 1 });
 
 			Assert.AreEqual(exp, p);
 		}
@@ -221,24 +232,24 @@ namespace FiniteFieldsTests
 
 		public void CutOffZeros_Polyn()
 		{
-			var res = new RPolyn(7, new int[] { 0, 6, 3, 0, 1, 1, 0, 0 });
-			var expectedres = new RPolyn(7, new int[] { 0, 6, 3, 0, 1, 1 });
+			var res = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 0, 6, 3, 0, 1, 1, 0, 0 });
+			var expectedres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 0, 6, 3, 0, 1, 1 });
 
 			Assert.AreEqual(expectedres, res);
 		}
 		[TestMethod]
 		public void UnaryMinus_Polyn()
 		{
-			var p = new RPolyn(7, new int[] { 6, 1, 3, 2, 0, 5 });
+			var p = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 6, 1, 3, 2, 0, 5 });
 
 			var res = p - p;
-			var expectedres = new RPolyn(7, new int[] { 0 });
+			var expectedres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 0 });
 			Assert.AreEqual(expectedres, res);
 		}
 		[TestMethod]
 		public void UnaryPlus_Polyn()
 		{
-			var expectedres = new RPolyn(7, new int[] { 6, 1, 3, 2, 0, 5 });
+			var expectedres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 6, 1, 3, 2, 0, 5 });
 			var res = +expectedres;
 
 			Assert.AreEqual(expectedres, res);
@@ -246,21 +257,21 @@ namespace FiniteFieldsTests
 		[TestMethod]
 		public void BinaryPlus_Polyn()
 		{
-			var p1 = new RPolyn(7, new int[] { 0, 6, 1, 2, 5, 1 });
-			var p2 = new RPolyn(7, new int[] { 1, 4, 3, 1, 2, 3 });
+			var p1 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 0, 6, 1, 2, 5, 1 });
+			var p2 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 1, 4, 3, 1, 2, 3 });
 
 			var res = p1 + p2;
-			var expres = new RPolyn(7, new int[] { 1, 3, 4, 3, 0, 4 });
+			var expres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 1, 3, 4, 3, 0, 4 });
 			Assert.AreEqual(expres, res);
 		}
 		[TestMethod]
 		public void BinaryMinus_Polyn()
 		{
-			var p1 = new RPolyn(7, new int[] { 3, 1, 1, 2, 1, 5 });
-			var p2 = new RPolyn(7, new int[] { 3, 5, 3, 5, });
+			var p1 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 1, 1, 2, 1, 5 });
+			var p2 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 5, 3, 5, });
 
 			var res = p1 - p2;
-			var expres = new RPolyn(7, new int[] { 0, 3, 5, 4, 1, 5 });
+			var expres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 0, 3, 5, 4, 1, 5 });
 			Assert.AreEqual(expres, res);
 		}
 
@@ -268,32 +279,32 @@ namespace FiniteFieldsTests
 
 		public void Asterisk_Polyn()
 		{
-			var p1 = new RPolyn(7, new int[] { 3, 1, 1 });
-			var p2 = new RPolyn(7, new int[] { 3, 5, 3, 2, 4 });
+			var p1 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 1, 1 });
+			var p2 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 5, 3, 2, 4 });
 
 			var res = p1 * p2;
-			var expectedres = new RPolyn(7, new int[] { 2, 4, 3, 0, 3, 6, 4 });
+			var expectedres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 2, 4, 3, 0, 3, 6, 4 });
 			Assert.AreEqual(expectedres, res);
 		}
 		[TestMethod]
 		public void RemainderTest1_Polyn()
 		{
-			var p1 = new RPolyn(7, new int[] { 3, 2, 3 });
-			var p2 = new RPolyn(7, new int[] { 1, 2, 6, 4, 4 });
+			var p1 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 2, 3 });
+			var p2 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 1, 2, 6, 4, 4 });
 
 			var res = p1 % p2;
-			var expectedres = new RPolyn(7, new int[] { 3, 2, 3 });
+			var expectedres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 2, 3 });
 
 			Assert.AreEqual(expectedres, res);
 		}
 		[TestMethod]
 		public void RemainderTest2_Polyn()
 		{
-			var p1 = new RPolyn(7, new int[] { 3, 2, 1 });
-			var p2 = new RPolyn(7, new int[] { 1, 2, 6, 4, 4 });
+			var p1 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 2, 1 });
+			var p2 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 1, 2, 6, 4, 4 });
 
 			var res = p2 % p1;
-			var expectedres = new RPolyn(7, new int[] { 2, 3 });
+			var expectedres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 2, 3 });
 
 			Assert.AreEqual(expectedres, res);
 		}
@@ -302,8 +313,8 @@ namespace FiniteFieldsTests
 		public void GetZero_GF16()
 		{
 			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
-			var res = gf16.GetAdditiveNeutral();
-			var expectedres = new FiniteFieldElement(2, new RPolyn(2, new int[] { 0 }), new RPolyn (2, new int[] { 1, 1, 0, 0, 1 }));
+			var res = gf16.GetAdditiveIdent();
+			var expectedres = new FiniteFieldElement(2, new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 0 }), new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 1, 1, 0, 0, 1 }));
 
 			Assert.AreEqual(expectedres, res);
 		}
@@ -311,8 +322,8 @@ namespace FiniteFieldsTests
 		public void GetOne_GF16()
 		{
 			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
-			var res = gf16.GetAdditiveNeutral();
-			var expectedres = new FiniteFieldElement(2, new RPolyn(2, new int[] { 0 }), new RPolyn(2, new int[] { 1, 1, 0, 0, 1 }));
+			var res = gf16.GetAdditiveIdent();
+			var expectedres = new FiniteFieldElement(2, new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 0 }), new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 1, 1, 0, 0, 1 }));
 
 			Assert.AreEqual(expectedres, res);
 		}
@@ -321,7 +332,7 @@ namespace FiniteFieldsTests
 		{
 			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
 			var res = gf16.Get(new int[] {0, 1, 1, 0, 1, 1});
-			var expectedres = new FiniteFieldElement(2, new RPolyn(2, new int[] { 1, 1 }), new RPolyn(2, new int[] { 1, 1, 0, 0, 1 }));
+			var expectedres = new FiniteFieldElement(2, new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 1, 1 }), new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 1, 1, 0, 0, 1 }));
 
 			Assert.AreEqual(expectedres, res);	
 		}
@@ -340,7 +351,7 @@ namespace FiniteFieldsTests
 			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
 			var e = gf16.Get(new int[] { 0, 1, 1, 1});
 			var res = e - e;
-			var expectedres = gf16.GetAdditiveNeutral();
+			var expectedres = gf16.GetAdditiveIdent();
 
 			Assert.AreEqual(expectedres, res);
 		}
@@ -387,7 +398,7 @@ namespace FiniteFieldsTests
 			var inv_a = a.Inverse();
 
 			var res = inv_a * a;
-			var expectedres = gf16.GetMultiplicativeNeutral();
+			var expectedres = gf16.GetMultiplicativeIdent();
 
 			Assert.AreEqual(expectedres, res);
 		}
@@ -479,6 +490,12 @@ namespace FiniteFieldsTests
 			cnf = cnf && e3_fromBytes.Equals(e3);
 
 			Assert.IsTrue(cnf);
+		}
+
+		[TestMethod]
+		public void PolynFFE_AJSFN()
+		{
+
 		}
 	}
 }
