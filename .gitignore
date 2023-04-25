@@ -4,3 +4,5 @@ finite-fields/obj
 finite-fields-tests/bin
 finite-fields-tests/obj
 TestResults/
+crc-lib/bin
+crc-lib/obj
