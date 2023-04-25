@@ -1,7 +1,7 @@
 ## finite-field-lib
 Library is used to manipulate the elements of finite fields
 
-#Create Field:
+# Create Field:
 ```c#
 // create prime finite field
 int n = 7;
@@ -14,7 +14,7 @@ var gf64 = new FiniteField(2, factorPolyn);
 //where factorPolyn - is irreducible over GF2 (or over respective prime finite field)
 //for GF64 this polynomial's degree should be 6 (where 6 is the exponent in 2^6 = 64)
 ```
-#Get element from field:
+# Get element from field:
 ```c#
 // get element from prime field
 gf7.Get(5);
