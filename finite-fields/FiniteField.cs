@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -41,10 +42,40 @@ namespace finite_fields
 			=> new FiniteFieldElement(_primeChar, new RPolyn(_primeChar, IntegerPolynomial), _polyn);
 		public FiniteFieldElement Get(byte[] bytes)
 		{
-			if (_primeChar == 2)
-				throw new NotImplementedException();
-			else
+			if (this._primeChar != 2)
 				throw new ArgumentException("Text");
+
+			string[] strbytes = new string[bytes.Length];
+			for (int i = 0; i < bytes.Length; i++)
+			{
+				char[] charArr = Convert.ToString(bytes[i], 2).PadLeft(8, '0').ToCharArray();
+				Array.Reverse(charArr);
+				strbytes[i] = new string(charArr);
+			}
+
+			//int lastIndex = strbytes.Length - 1;
+			string binString;
+			int[] res = new int[strbytes.Length * 8 /*+ strbytes[lastIndex].Length*/];
+			for (int i = 0; i < strbytes.Length; i++)
+			{
+				binString = strbytes[i];
+				for (int j = 0; j < binString.Length; j++)
+				{
+					res[i * 8 + j] = Convert.ToInt32(binString[j]); 
+				}
+				for (int j = binString.Length; j < 8; j++)
+				{
+					res[i * 8 + j] = 0;
+				}
+			}
+
+			//binString = strbytes[lastIndex];
+			//for (int j = 0; j < binString.Length; j++)
+			//{
+			//	res[lastIndex*8 + j] = Convert.ToInt32(binString[j]);
+			//}
+
+			return new FiniteFieldElement(this._primeChar, new RPolyn(_primeChar, res), this._polyn);
 		}
 	}
 
