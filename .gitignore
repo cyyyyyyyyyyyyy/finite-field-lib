@@ -6,3 +6,5 @@ finite-fields-tests/obj
 TestResults/
 crc-lib/bin
 crc-lib/obj
+crc-lib-tests/bin
+crc-lib-tests/obj
