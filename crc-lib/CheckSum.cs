@@ -12,7 +12,7 @@ namespace crc_lib
 		private readonly Polyn<FiniteFieldElement> _mainpolyn;
 		public CheckSum(byte[] bytes) //little-endian
 		{
-			if (bytes.Length != _mpl - 1) throw new ArgumentException(""); //if bytes = { 0, 0, 0, 0} ?
+			if (bytes.Length != _mpl - 1) throw new ArgumentException("Length of byte array should equal to 4");
 
 			gf256 = new FiniteField(_ffc, _factorpolyn);
 			var ElementPolyn = new FiniteFieldElement[_mpl];
@@ -20,11 +20,11 @@ namespace crc_lib
 			{
 				ElementPolyn[i] = gf256.Get(new byte[] { bytes[i] } ); // overload for byte and not byte[]
 			}
-			ElementPolyn[_mpl - 1] = gf256.GetMultiplicativeIdent(); // 1
+			ElementPolyn[_mpl - 1] = gf256.GetMultiplicativeIdent(); // get 1
 			_mainpolyn = new Polyn<FiniteFieldElement>(_ffc, ElementPolyn);
 		}
 
-		public byte[] CalculateCheckSum(byte[] message) 
+		public byte[] CalculateCheckSum(byte[] message) //little-endian
 		{
 			var ffElementsOfBytes = message
 				.Select(x => gf256.Get(new byte[] { x } ))
@@ -54,7 +54,7 @@ namespace crc_lib
 		}
 		public bool Check(byte[] initialCheckSum, byte[] currCheckSum) 
 		{ 
-			return initialCheckSum.SequenceEqual(currCheckSum); //cutoff zeros
+			return initialCheckSum.SequenceEqual(currCheckSum);
 		}
 
 	}

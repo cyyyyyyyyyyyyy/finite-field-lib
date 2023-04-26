@@ -59,5 +59,26 @@ namespace crc_lib_tests
 			var cr = checkSumInstance.Check(checkSum, new byte[] { 32, 63, 172, 111});
 			Assert.IsTrue(cr);
 		}
+
+		[TestMethod]
+		public void Demo()
+		{
+			// provide four bytes as an input to the constructor
+            var checkSumInstance = new CheckSum(new byte[] { 1, 89, 12, 45});
+
+            //create message as array of bytes
+            // notice: byte order is little-endian
+            var msg = new byte[] { 245, 1, 90, 0, 12, 46, 23, 85, 85, 0, 1};
+			//calculate checksum
+			var initialCheckSum = checkSumInstance.CalculateCheckSum(msg); // {236, 83, 61, 83}
+
+			//check
+			var randomCheckSum = new byte[] { 90, 1, 78, 13 };
+			var copiedCheckSum = new byte[initialCheckSum.Length];
+			initialCheckSum.CopyTo(copiedCheckSum, 0);
+
+			bool check1 = checkSumInstance.Check(initialCheckSum, randomCheckSum); // false
+            bool check2 = checkSumInstance.Check(initialCheckSum, copiedCheckSum); // true
+        }
 	}
 }
