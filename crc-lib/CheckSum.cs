@@ -9,7 +9,7 @@ namespace crc_lib
 		private const int _ffc = 2; //finite field characteristic
 		private readonly int[] _factorpolyn = { 1, 0, 1, 1, 1, 0, 0, 0, 1 };
 		private readonly FiniteField gf256;
-		private readonly RPolyn<FiniteFieldElement> _mainpolyn;
+		private readonly Polyn<FiniteFieldElement> _mainpolyn;
 		public CheckSum(byte[] bytes) //little-endian
 		{
 			if (bytes.Length != _mpl - 1) throw new ArgumentException(""); //if bytes = { 0, 0, 0, 0} ?
@@ -21,7 +21,7 @@ namespace crc_lib
 				ElementPolyn[i] = gf256.Get(new byte[] { bytes[i] } ); // overload for byte and not byte[]
 			}
 			ElementPolyn[_mpl - 1] = gf256.GetMultiplicativeIdent(); // 1
-			_mainpolyn = new RPolyn<FiniteFieldElement>(_ffc, ElementPolyn);
+			_mainpolyn = new Polyn<FiniteFieldElement>(_ffc, ElementPolyn);
 		}
 
 		public byte[] CalculateCheckSum(byte[] message) 
@@ -30,7 +30,7 @@ namespace crc_lib
 				.Select(x => gf256.Get(new byte[] { x } ))
 				.ToArray();
 
-			var PolynOfElements = new RPolyn<FiniteFieldElement>(_ffc, ffElementsOfBytes); 
+			var PolynOfElements = new Polyn<FiniteFieldElement>(_ffc, ffElementsOfBytes); 
 			var remainder = PolynOfElements % _mainpolyn;
 
 			var remainderValue = remainder
@@ -41,7 +41,7 @@ namespace crc_lib
 			byte[] result = PadRight(remainderValue, _mpl - 1);
 			return result;
 		}
-		internal byte[] PadRight(byte[] src, int count) // count is 4
+		private byte[] PadRight(byte[] src, int count) // count is 4
 		{
 			byte[] result = new byte[count];
 			for (int i = 0; i < src.Length; i++) 
@@ -52,10 +52,9 @@ namespace crc_lib
 
 			return result;
 		}
-		public bool Check(byte[] hostCheckSum, byte[] guestCheckSum) 
+		public bool Check(byte[] initialCheckSum, byte[] currCheckSum) 
 		{ 
-
-			return hostCheckSum.SequenceEqual(guestCheckSum); //cutoff zeros
+			return initialCheckSum.SequenceEqual(currCheckSum); //cutoff zeros
 		}
 
 	}
