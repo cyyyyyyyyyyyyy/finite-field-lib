@@ -29,8 +29,6 @@ namespace finite_fields
 		{
 			if (ReferenceEquals(obj, null))
 				return false;
-			//if (obj.GetType() != this.GetType())
-			//	return false;
 			if (obj is not PrimeFiniteField ppf)
 				return false;
 
@@ -70,11 +68,10 @@ namespace finite_fields
 		public int GetValue() => _value;
 		public int GetCharacteristic() => _primeChar;
 		public IFiniteField<PrimeFiniteFieldElement> GetField() => _field;
-		public bool IsWellDefinedWith(PrimeFiniteFieldElement other) => this._field.Equals(other._field);
+		public bool IsOperationCorrectWith(PrimeFiniteFieldElement other) => this._field.Equals(other._field);
 		private static int ModularExp(int b, int exp, int m)
 		{
 			//need to refactor - not effective
-			//int exp = _primeChar - 2;
 			int res = 1;
 			while (exp > 0)
 			{
@@ -89,15 +86,15 @@ namespace finite_fields
 			=> e;
 		public static PrimeFiniteFieldElement operator +(PrimeFiniteFieldElement a1, PrimeFiniteFieldElement a2)
 		{
-			if (!a1.IsWellDefinedWith(a2))
-				throw new ArgumentException("Incorrect characteristics");
+			if (!a1.IsOperationCorrectWith(a2))
+				throw new ArgumentException("Operation (addition) is not correct with given elements");
 			return new PrimeFiniteFieldElement(a1._primeChar, (a1._value + a2._value) % a1._primeChar, a1._field);
 		}
 
 		public static PrimeFiniteFieldElement operator *(PrimeFiniteFieldElement m1, PrimeFiniteFieldElement m2)
 		{
-			if (!m1.IsWellDefinedWith(m2))
-				throw new ArgumentException("Incorrect characteristics");
+			if (!m1.IsOperationCorrectWith(m2))
+				throw new ArgumentException("Operation (multiplication) is not correct with given elements");
 			return new PrimeFiniteFieldElement(m1._primeChar, (m1._value * m2._value) % m1._primeChar, m1._field);
 		}
 
@@ -121,12 +118,10 @@ namespace finite_fields
 		{
 			if (ReferenceEquals(obj, null))
 				return false;
-			//if (obj.GetType() != this.GetType())
-			//	return false;
 			if (obj is not PrimeFiniteFieldElement pffe) // pffe = prime finite field element
 				return false;
 
-			if (pffe.IsWellDefinedWith(this) //self-explanatory: correctness and value check
+			if (pffe.IsOperationCorrectWith(this) //self-explanatory: correctness and value check
 				&& pffe._value.Equals(this._value))
 				return true;
 

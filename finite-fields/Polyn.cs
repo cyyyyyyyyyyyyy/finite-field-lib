@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 
 namespace finite_fields
 {
-	public class RPolyn<FE> where FE : IFiniteFieldElement<FE>
+	public class Polyn<FE> where FE : IFiniteFieldElement<FE>
 	{
 		private readonly int _primeChar; // correctness
 		private readonly int _length;
 		private readonly IFiniteField<FE> _field; //correctness
 		private readonly FE[] _value;
-		public RPolyn(int PrimeFieldCharacteristic, int[] IntegerPolynomialValue) // for RPolyn<PrimeFiniteFieldElement>
+		public Polyn(int PrimeFieldCharacteristic, int[] IntegerPolynomialValue) // for Polyn<PrimeFiniteFieldElement>
 		{
 			if (PrimeFieldCharacteristic < 1)
-				throw new ArgumentException("Text");
+				throw new ArgumentException("Error in Polyn: PrimeFieldCharacteristic should be prime and greater than 1");
 
 			if (IntegerPolynomialValue.Length < 1)
-				throw new ArgumentException("Text");
+				throw new ArgumentException("Error in Polyn: IntegerPolynomialValue's length should be greater or equal to 1");
 
 			_primeChar = PrimeFieldCharacteristic;
 			_field = (IFiniteField<FE>)(new PrimeFiniteField(_primeChar));
@@ -38,27 +38,20 @@ namespace finite_fields
 			(FE)(IFiniteFieldElement<PrimeFiniteFieldElement>)
 			(new PrimeFiniteFieldElement(_primeChar, IntegerPolynomialValue[i], new PrimeFiniteField(_primeChar))));
 		}
-		public RPolyn(int PrimeFieldCharacteristic, FE[] ElementPolynomialValue) // for both
+		public Polyn(int PrimeFieldCharacteristic, FE[] ElementPolynomialValue) // for both
 		{
 			if (PrimeFieldCharacteristic < 1)
-				throw new ArgumentException("Text");
+				throw new ArgumentException("Error in Polyn: PrimeFieldCharacteristic should be prime and greater than 1");
 
 			if (ElementPolynomialValue.Length < 1)
-				throw new ArgumentException("Text");
+				throw new ArgumentException("Error in Polyn: ElementPolynomialValue's length should be greater or equal to 1");
 
 			_primeChar = PrimeFieldCharacteristic;
-			//_field = (IField<FE>)new PrimeFiniteField(_primeChar);
-
-			//dimension correctness?
-			//characteristics correctness
-			//for (int i = 0; i < ElementPolynomialValue.Length; i++)
-			//	if (!ElementPolynomialValue[i].GetCharacteristic().Equals(_primeChar))
-			//		throw new ArgumentException("Text");
 
 			//correctness
 			for (int i = 0; i < ElementPolynomialValue.Length - 1; i++)
-				if (!ElementPolynomialValue[i].IsWellDefinedWith(ElementPolynomialValue[i + 1])) //OK
-					throw new ArgumentException("Text");
+				if (!ElementPolynomialValue[i].IsOperationCorrectWith(ElementPolynomialValue[i + 1])) //OK
+					throw new ArgumentException("Incorrect ElementPolynomialValue: every element should belong to the same (Prime)FiniteField");
 
 			_field = ElementPolynomialValue[0].GetField();
 			//cut off zeros
@@ -78,6 +71,9 @@ namespace finite_fields
 		public int GetCharacteristic() => _primeChar;
 		public int GetLength() => _length;
 		public FE[] GetValue() => _value;
+
+		private bool IsOperationCorrectWith(Polyn<FE> other)
+			=> this._primeChar.Equals(other._primeChar) && this._field.Equals(other._field);
 		private static FE[] Fill(int Length, Func<int, FE> fun)
 		{
 			FE[] res = new FE[Length];
@@ -86,22 +82,22 @@ namespace finite_fields
 
 			return res;
 		}
-		private RPolyn<FE> Map(Func<FE, int, FE> fun)
+		private Polyn<FE> Map(Func<FE, int, FE> fun)
 		{
 			var res = new FE[this._length];
 			for (int i = 0; i < _length; i++)
 				res[i] = fun(this._value[i], i);
 
-			return new RPolyn<FE>(this._primeChar, res);
+			return new Polyn<FE>(this._primeChar, res);
 		}
 
-		private static RPolyn<FE> Map(RPolyn<FE> p1, RPolyn<FE> p2, Func<FE, FE, FE> fun)
+		private static Polyn<FE> Map(Polyn<FE> p1, Polyn<FE> p2, Func<FE, FE, FE> fun)
 		{
-			if (!p1._primeChar.Equals(p2._primeChar))
-				throw new ArgumentException("text");
+			if (!p1.IsOperationCorrectWith(p2))
+				throw new ArgumentException("Operation (addition) is not correct with given polynomials");
 
-			RPolyn<FE> m;
-			RPolyn<FE> l;
+			Polyn<FE> m;
+			Polyn<FE> l;
 			if (p1._length > p2._length)
 			{
 				m = p1;
@@ -128,25 +124,25 @@ namespace finite_fields
 					res[j] = fun(p1._value[j], p1._field.GetAdditiveIdent());
 			}
 
-			return new RPolyn<FE>(p1._primeChar, res);
+			return new Polyn<FE>(p1._primeChar, res);
 		}
-		public static RPolyn<FE> operator +(RPolyn<FE> pe)
+		public static Polyn<FE> operator +(Polyn<FE> pe)
 			=> pe;
-		public static RPolyn<FE> operator -(RPolyn<FE> pe)
+		public static Polyn<FE> operator -(Polyn<FE> pe)
 			=> pe.Map((e, i) => -e);
-		public static RPolyn<FE> operator +(RPolyn<FE> pa1, RPolyn<FE> pa2)
+		public static Polyn<FE> operator +(Polyn<FE> pa1, Polyn<FE> pa2)
 		{
 			return Map(pa1, pa2, (e1, e2) => e1 + e2);
 		}
-		public static RPolyn<FE> operator -(RPolyn<FE> pm, RPolyn<FE> ps)
+		public static Polyn<FE> operator -(Polyn<FE> pm, Polyn<FE> ps)
 		{
 			return Map(pm, ps, (e1, e2) => e1 - e2);
 		}
-		public static RPolyn<FE> operator %(RPolyn<FE> p1, RPolyn<FE> p2)
+		public static Polyn<FE> operator %(Polyn<FE> p1, Polyn<FE> p2)
 		{
 			//p2 - can be reducible
-			if (!p1._primeChar.Equals(p2._primeChar)) // check for zero
-				throw new ArgumentException("text");
+			if (!p1.IsOperationCorrectWith(p2)) // check for zero
+				throw new ArgumentException("Operation (division) is not correct with given polynomials");
 			if ((p2._value.Length == 1) && (p2._value[0].Equals(p2._field.GetAdditiveIdent())))
 				throw new ArgumentException("Cannot divide by zero");
 
@@ -159,7 +155,6 @@ namespace finite_fields
 			{
 				FE coeff = remainder[p1._length - 1 - i] / p2._value[p2._length - 1]; // if coeff is zero?
 				//quotient[quotient.Length - i - 1] = coeff;
-				//if (coeff.InternalGetValue() == 0) 
 				if (coeff.Equals(p1._field.GetAdditiveIdent()))
 					continue;
 
@@ -169,12 +164,12 @@ namespace finite_fields
 				}
 			}
 
-			return new RPolyn<FE>(p1._primeChar, remainder);
+			return new Polyn<FE>(p1._primeChar, remainder);
 		}
-		public static RPolyn<FE> operator *(RPolyn<FE> pm1, RPolyn<FE> pm2)
+		public static Polyn<FE> operator *(Polyn<FE> pm1, Polyn<FE> pm2)
 		{
-			if (!pm1._primeChar.Equals(pm2._primeChar))
-				throw new ArgumentException("text");
+			if (!pm1.IsOperationCorrectWith(pm2))
+				throw new ArgumentException("Operation (multiplication) is not correct with given polynomials");
 
 			var res = Fill(pm1._length + pm2._length - 1, i => pm1._field.GetAdditiveIdent());
 
@@ -182,17 +177,14 @@ namespace finite_fields
 				for (int j = 0; j < pm2._length; j++)
 					res[i + j] += pm1._value[i] * pm2._value[j];
 
-			return new RPolyn<FE>(pm1._primeChar, res);
+			return new Polyn<FE>(pm1._primeChar, res);
 		}
 
 		public override bool Equals(object? obj)
 		{
 			if (ReferenceEquals(obj, null))
 				return false;
-
-			//if (obj.GetType() != this.GetType())
-			//	return false;
-			if (obj is not RPolyn<FE> p)
+			if (obj is not Polyn<FE> p)
 				return false;
 
 			if (!p._primeChar.Equals(this._primeChar)
@@ -200,7 +192,7 @@ namespace finite_fields
 				return false;
 
 			for (int i = 0; i < this._length; i++)
-				if (!this._value[i].Equals(p._value[i])) // compares only _value, characteristic of concrete RPolyn is OK
+				if (!this._value[i].Equals(p._value[i])) // compares only _value, characteristic of concrete Polyn is OK
 					return false;
 			return true;
 		}

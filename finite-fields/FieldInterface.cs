@@ -14,7 +14,7 @@ namespace finite_fields
 	{
 		public int GetCharacteristic();
 		public IFiniteField<E> GetField();
-		public bool IsWellDefinedWith(E other);
+		public bool IsOperationCorrectWith(E other);
 		public E Inverse();
 	}
 

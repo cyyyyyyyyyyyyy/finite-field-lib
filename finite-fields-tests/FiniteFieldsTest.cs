@@ -288,8 +288,8 @@ namespace FiniteFieldsTests
 		[TestMethod]
 		public void Initialization_Polyn()
 		{
-			var p = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 12, 7, -12, 67, -90 });
-			var exp = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 5, 0, 2, 4, 1 });
+			var p = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 12, 7, -12, 67, -90 });
+			var exp = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 5, 0, 2, 4, 1 });
 
 			Assert.AreEqual(exp, p);
 		}
@@ -297,24 +297,24 @@ namespace FiniteFieldsTests
 
 		public void CutOffZeros_Polyn()
 		{
-			var res = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 0, 6, 3, 0, 1, 1, 0, 0 });
-			var expectedres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 0, 6, 3, 0, 1, 1 });
+			var res = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 0, 6, 3, 0, 1, 1, 0, 0 });
+			var expectedres = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 0, 6, 3, 0, 1, 1 });
 
 			Assert.AreEqual(expectedres, res);
 		}
 		[TestMethod]
 		public void UnaryMinus_Polyn()
 		{
-			var p = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 6, 1, 3, 2, 0, 5 });
+			var p = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 6, 1, 3, 2, 0, 5 });
 
 			var res = p - p;
-			var expectedres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 0 });
+			var expectedres = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 0 });
 			Assert.AreEqual(expectedres, res);
 		}
 		[TestMethod]
 		public void UnaryPlus_Polyn()
 		{
-			var expectedres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 6, 1, 3, 2, 0, 5 });
+			var expectedres = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 6, 1, 3, 2, 0, 5 });
 			var res = +expectedres;
 
 			Assert.AreEqual(expectedres, res);
@@ -322,21 +322,21 @@ namespace FiniteFieldsTests
 		[TestMethod]
 		public void BinaryPlus_Polyn()
 		{
-			var p1 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 0, 6, 1, 2, 5, 1 });
-			var p2 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 1, 4, 3, 1, 2, 3 });
+			var p1 = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 0, 6, 1, 2, 5, 1 });
+			var p2 = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 1, 4, 3, 1, 2, 3 });
 
 			var res = p1 + p2;
-			var expres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 1, 3, 4, 3, 0, 4 });
+			var expres = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 1, 3, 4, 3, 0, 4 });
 			Assert.AreEqual(expres, res);
 		}
 		[TestMethod]
 		public void BinaryMinus_Polyn()
 		{
-			var p1 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 1, 1, 2, 1, 5 });
-			var p2 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 5, 3, 5, });
+			var p1 = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 3, 1, 1, 2, 1, 5 });
+			var p2 = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 3, 5, 3, 5, });
 
 			var res = p1 - p2;
-			var expres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 0, 3, 5, 4, 1, 5 });
+			var expres = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 0, 3, 5, 4, 1, 5 });
 			Assert.AreEqual(expres, res);
 		}
 
@@ -344,32 +344,32 @@ namespace FiniteFieldsTests
 
 		public void Asterisk_Polyn()
 		{
-			var p1 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 1, 1 });
-			var p2 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 5, 3, 2, 4 });
+			var p1 = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 3, 1, 1 });
+			var p2 = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 3, 5, 3, 2, 4 });
 
 			var res = p1 * p2;
-			var expectedres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 2, 4, 3, 0, 3, 6, 4 });
+			var expectedres = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 2, 4, 3, 0, 3, 6, 4 });
 			Assert.AreEqual(expectedres, res);
 		}
 		[TestMethod]
 		public void RemainderTest1_Polyn()
 		{
-			var p1 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 2, 3 });
-			var p2 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 1, 2, 6, 4, 4 });
+			var p1 = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 3, 2, 3 });
+			var p2 = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 1, 2, 6, 4, 4 });
 
 			var res = p1 % p2;
-			var expectedres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 2, 3 });
+			var expectedres = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 3, 2, 3 });
 
 			Assert.AreEqual(expectedres, res);
 		}
 		[TestMethod]
 		public void RemainderTest2_Polyn()
 		{
-			var p1 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 3, 2, 1 });
-			var p2 = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 1, 2, 6, 4, 4 });
+			var p1 = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 3, 2, 1 });
+			var p2 = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 1, 2, 6, 4, 4 });
 
 			var res = p2 % p1;
-			var expectedres = new RPolyn<PrimeFiniteFieldElement>(7, new int[] { 2, 3 });
+			var expectedres = new Polyn<PrimeFiniteFieldElement>(7, new int[] { 2, 3 });
 
 			Assert.AreEqual(expectedres, res);
 		}
@@ -379,7 +379,7 @@ namespace FiniteFieldsTests
 		{
 			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
 			var res = gf16.GetAdditiveIdent();
-			var expectedres = new FiniteFieldElement(2, new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 0 }), gf16);
+			var expectedres = new FiniteFieldElement(2, new Polyn<PrimeFiniteFieldElement>(2, new int[] { 0 }), gf16);
 
 			Assert.AreEqual(expectedres, res);
 		}
@@ -388,7 +388,7 @@ namespace FiniteFieldsTests
 		{
 			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
 			var res = gf16.GetAdditiveIdent();
-			var expectedres = new FiniteFieldElement(2, new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 0 }), gf16);
+			var expectedres = new FiniteFieldElement(2, new Polyn<PrimeFiniteFieldElement>(2, new int[] { 0 }), gf16);
 
 			Assert.AreEqual(expectedres, res);
 		}
@@ -397,7 +397,7 @@ namespace FiniteFieldsTests
 		{
 			var gf16 = new FiniteField(2, new int[] { 1, 1, 0, 0, 1 });
 			var res = gf16.Get(new int[] {0, 1, 1, 0, 1, 1});
-			var expectedres = new FiniteFieldElement(2, new RPolyn<PrimeFiniteFieldElement>(2, new int[] { 1, 1 }), gf16);
+			var expectedres = new FiniteFieldElement(2, new Polyn<PrimeFiniteFieldElement>(2, new int[] { 1, 1 }), gf16);
 
 			Assert.AreEqual(expectedres, res);	
 		}
@@ -556,14 +556,14 @@ namespace FiniteFieldsTests
 		public void PolynFFE_BinaryPlus()
 		{
 			var gf256 = new FiniteField(2, new int[] { 1, 0, 1, 1, 1, 0, 0, 0, 1 });
-			var p1 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] { 
+			var p1 = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] { 
 				gf256.Get(new byte[] { 56 }),
 				gf256.Get(new byte[] { 140 }),
 				gf256.Get(new byte[] { 1, }),
 				gf256.Get(new byte[] { 13 })
 			});
 
-			var p2 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+			var p2 = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
 				gf256.Get(new byte[] { 0 }),
 				gf256.Get(new byte[] { 137 }),
 				gf256.Get(new byte[] { 201 }),
@@ -572,13 +572,13 @@ namespace FiniteFieldsTests
 
 			var res = p1 + p2;
 			//var bres = res.GetValue().Select(x => x.GetByte()).ToArray();
-			var expectedres1 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+			var expectedres1 = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
 				gf256.Get(new byte[] { 56 }) + gf256.Get(new byte[] { 0 }),
 				gf256.Get(new byte[] { 140 }) + gf256.Get(new byte[] { 137 }),
 				gf256.Get(new byte[] { 1, }) + gf256.Get(new byte[] { 201 }),
 				gf256.Get(new byte[] { 13 }) + gf256.Get(new byte[] { 1 })
 			});
-			var expectedres2 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+			var expectedres2 = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
 				gf256.Get(new byte[] { 56 }),
 				gf256.Get(new byte[] { 5 }),
 				gf256.Get(new byte[] { 200, }),
@@ -592,14 +592,14 @@ namespace FiniteFieldsTests
 		public void PolynFFE_BinaryMinus()
 		{
 			var gf256 = new FiniteField(2, new int[] { 1, 0, 1, 1, 1, 0, 0, 0, 1 });
-			var p1 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+			var p1 = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
 				gf256.Get(new byte[] { 56 }),
 				gf256.Get(new byte[] { 140 }),
 				gf256.Get(new byte[] { 1 }),
 				gf256.Get(new byte[] { 13 })
 			});
 
-			var p2 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+			var p2 = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
 				gf256.Get(new byte[] { 0 }),
 				gf256.Get(new byte[] { 137 }),
 				gf256.Get(new byte[] { 201 }),
@@ -608,13 +608,13 @@ namespace FiniteFieldsTests
 
 			var res = p1 - p2;
 			//var bres = res.GetValue().Select(x => x.GetByte()).ToArray();
-			var expectedres1 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+			var expectedres1 = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
 				gf256.Get(new byte[] { 56 }) - gf256.Get(new byte[] { 0 }),
 				gf256.Get(new byte[] { 140 }) - gf256.Get(new byte[] { 137 }),
 				gf256.Get(new byte[] { 1 }) - gf256.Get(new byte[] { 201 }),
 				gf256.Get(new byte[] { 13 }) - gf256.Get(new byte[] { 1 })
 			});
-			var expectedres2 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+			var expectedres2 = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
 				gf256.Get(new byte[] { 56 }),
 				gf256.Get(new byte[] { 5 }),
 				gf256.Get(new byte[] { 200, }),
@@ -628,14 +628,14 @@ namespace FiniteFieldsTests
 		public void PolynFFE_Asterisk()
 		{
 			var gf256 = new FiniteField(2, new int[] { 1, 0, 1, 1, 1, 0, 0, 0, 1 });
-			var p1 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+			var p1 = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
 				gf256.Get(new byte[] { 37 }),
 				gf256.Get(new byte[] { 212 }),
 				gf256.Get(new byte[] { 13 }),
 				gf256.Get(new byte[] { 70 })
 			});
 
-			var p2 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+			var p2 = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
 				gf256.Get(new byte[] { 1 }),
 				gf256.Get(new byte[] { 0 }),
 				gf256.Get(new byte[] { 123 }),
@@ -643,7 +643,7 @@ namespace FiniteFieldsTests
 			});
 
 			var res = p1 * p2;
-			var expectedres = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+			var expectedres = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
 				gf256.Get(new byte[] { 37 }),
 				gf256.Get(new byte[] { 212 }),
 				gf256.Get(new byte[] { 92 }) ,
@@ -659,14 +659,14 @@ namespace FiniteFieldsTests
 		public void PolynFFE_Remainder()
 		{
 			var gf256 = new FiniteField(2, new int[] { 1, 0, 1, 1, 1, 0, 0, 0, 1 });
-			var p1 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+			var p1 = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
 				gf256.Get(new byte[] { 37 }),
 				gf256.Get(new byte[] { 212 }),
 				gf256.Get(new byte[] { 13 }),
 				gf256.Get(new byte[] { 70 })
 			});
 
-			var p2 = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+			var p2 = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
 				gf256.Get(new byte[] { 1 }),
 				gf256.Get(new byte[] { 0 }),
 				gf256.Get(new byte[] { 123 }),
@@ -674,7 +674,7 @@ namespace FiniteFieldsTests
 			});
 
 			var res = p2 % p1;
-			var expectedres = new RPolyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
+			var expectedres = new Polyn<FiniteFieldElement>(2, new FiniteFieldElement[] {
 				gf256.Get(new byte[] { 30 }),
 				gf256.Get(new byte[] { 199 }),
 				gf256.Get(new byte[] { 74 })
